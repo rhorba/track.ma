@@ -1,6 +1,7 @@
 export interface GpsPosition {
   vehicleId: string;
   imei: string;
+  organizationId?: string;
   lat: number;
   lng: number;
   speed: number;       // km/h

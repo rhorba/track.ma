@@ -1,0 +1,77 @@
+'use client';
+
+import dynamic from 'next/dynamic';
+import { useFleetSocket } from '@/lib/socket';
+import { useAuth } from '@/lib/auth';
+import useSWR from 'swr';
+import { getFleetPositions } from '@/lib/api';
+
+const Map = dynamic(() => import('@/components/Map'), { ssr: false });
+
+function StatusBadge({ active, idle, offline }: { active: number; idle: number; offline: number }) {
+  return (
+    <div className="flex items-center gap-4 text-sm">
+      <span className="flex items-center gap-1.5">
+        <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
+        <span className="text-slate-600 dark:text-slate-400">{active} Active</span>
+      </span>
+      <span className="flex items-center gap-1.5">
+        <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
+        <span className="text-slate-600 dark:text-slate-400">{idle} Idle</span>
+      </span>
+      <span className="flex items-center gap-1.5">
+        <span className="w-2 h-2 rounded-full bg-slate-400 inline-block" />
+        <span className="text-slate-600 dark:text-slate-400">{offline} Offline</span>
+      </span>
+    </div>
+  );
+}
+
+export default function DashboardPage() {
+  const { user } = useAuth();
+  const livePositions = useFleetSocket(user?.organizationId ?? null);
+
+  // Seed initial positions from REST, then WebSocket takes over
+  const { data: initial } = useSWR('fleet-positions', getFleetPositions, {
+    revalidateOnFocus: false,
+  });
+
+  // Merge REST snapshot with live WS updates
+  const seedPositions: Record<string, any> = {};
+  if (initial) {
+    for (const item of initial) {
+      if (item.position) seedPositions[item.vehicle.id] = item.position;
+    }
+  }
+  const positions = { ...seedPositions, ...livePositions };
+
+  const values = Object.values(positions) as any[];
+  const active = values.filter((p) => p.ignition && p.speed > 0).length;
+  const idle = values.filter((p) => p.ignition && p.speed === 0).length;
+  const offline = values.filter((p) => !p.ignition).length;
+
+  return (
+    <div className="flex flex-col h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
+        <div>
+          <h1 className="text-lg font-semibold text-slate-900 dark:text-white">Live Map</h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Real-time vehicle positions
+          </p>
+        </div>
+        <StatusBadge active={active} idle={idle} offline={offline} />
+      </div>
+
+      {/* Map — fills remaining height */}
+      <div className="flex-1 relative">
+        <Map positions={positions} />
+
+        {/* Vehicle count chip */}
+        <div className="absolute bottom-4 right-4 z-[1000] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 shadow-lg text-sm font-medium text-slate-700 dark:text-slate-300">
+          {values.length} vehicles tracked
+        </div>
+      </div>
+    </div>
+  );
+}
