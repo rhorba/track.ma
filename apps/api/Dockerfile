@@ -3,7 +3,7 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 FROM base AS deps
-COPY pnpm-workspace.yaml package.json ./
+COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
 COPY apps/api/package.json ./apps/api/
 COPY packages/shared/package.json ./packages/shared/
 RUN pnpm install --frozen-lockfile
@@ -23,7 +23,11 @@ WORKDIR /app/apps/api
 RUN pnpm build
 
 FROM base AS prod
-COPY --from=build /app/apps/api/dist ./dist
-COPY --from=deps /app/apps/api/node_modules ./node_modules
+ENV NODE_ENV=production
+RUN addgroup -S app && adduser -S app -G app
+COPY --from=build --chown=app:app /app/apps/api/dist ./dist
+COPY --from=deps --chown=app:app /app/node_modules ./node_modules
+USER app
 EXPOSE 3001
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD wget -qO- http://localhost:3001/api/health || exit 1
 CMD ["node", "dist/main"]

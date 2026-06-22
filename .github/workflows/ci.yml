@@ -38,6 +38,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Type-check API
+        run: pnpm --filter api exec tsc --noEmit
+
+      - name: Type-check GPS Ingestion
+        run: pnpm --filter gps-ingestion exec tsc --noEmit
+
+      - name: Type-check Web
+        run: pnpm --filter web exec tsc --noEmit
+
       - name: Lint API
         run: pnpm --filter api lint
 
@@ -73,4 +82,7 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: http://localhost:3001
           NEXT_PUBLIC_WS_URL: ws://localhost:3001
+          NEXT_PUBLIC_STRIPE_PRICE_STARTER: price_test_starter
+          NEXT_PUBLIC_STRIPE_PRICE_PRO: price_test_pro
+          NEXT_PUBLIC_STRIPE_PRICE_BUSINESS: price_test_business
         run: pnpm --filter web build
