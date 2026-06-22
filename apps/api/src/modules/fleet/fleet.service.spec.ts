@@ -26,6 +26,7 @@ const VEHICLE: Partial<Vehicle> = { id: 'v-1', imei: '123456789012345', organiza
 
 const BASE_POS = {
   imei: '123456789012345',
+  vehicleId: '123456789012345',
   lat: 33.57,
   lng: -7.59,
   speed: 60,
