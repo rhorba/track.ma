@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: trackma_test
+          POSTGRES_USER: trackma
+          POSTGRES_PASSWORD: trackma_pass
+        ports: ['5432:5432']
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint API
+        run: pnpm --filter api lint
+
+      - name: Lint GPS Ingestion
+        run: pnpm --filter gps-ingestion lint
+
+      - name: Lint Web
+        run: pnpm --filter web lint
+
+      - name: Test API
+        env:
+          DATABASE_URL: postgresql://trackma:trackma_pass@localhost:5432/trackma_test
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: ci-test-secret-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+          JWT_REFRESH_SECRET: ci-refresh-secret-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+          NODE_ENV: test
+        run: pnpm --filter api test:cov
+
+      - name: Test GPS Ingestion
+        env:
+          REDIS_URL: redis://localhost:6379
+          MQTT_BROKER_URL: mqtt://localhost:1883
+          NODE_ENV: test
+        run: pnpm --filter gps-ingestion test:cov
+
+      - name: Build API
+        run: pnpm --filter api build
+
+      - name: Build GPS Ingestion
+        run: pnpm --filter gps-ingestion build
+
+      - name: Build Web
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3001
+          NEXT_PUBLIC_WS_URL: ws://localhost:3001
+        run: pnpm --filter web build
