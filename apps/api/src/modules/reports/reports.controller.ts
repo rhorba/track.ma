@@ -15,4 +15,19 @@ export class ReportsController {
       new Date(to || Date.now()),
     );
   }
+
+  @Get('trips')
+  trips(
+    @Request() req: any,
+    @Query('vehicleId') vehicleId: string,
+    @Query('from') from: string,
+    @Query('to') to: string,
+  ) {
+    return this.service.getTrips(
+      req.user.organizationId,
+      vehicleId,
+      new Date(from || Date.now() - 30 * 86400000),
+      new Date(to || Date.now()),
+    );
+  }
 }

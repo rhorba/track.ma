@@ -13,6 +13,8 @@ import Redis from 'ioredis';
 import { REDIS_SUBSCRIBER } from '../redis/redis.module';
 import { REDIS_CHANNELS } from '@trackma/shared';
 import { FleetService } from './fleet.service';
+import { AlertEngineService } from '../alerts/alert-engine.service';
+import { TripDetectorService } from '../trips/trip-detector.service';
 
 @WebSocketGateway({ cors: { origin: '*' }, namespace: '/fleet' })
 export class FleetGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -22,17 +24,30 @@ export class FleetGateway implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @Inject(REDIS_SUBSCRIBER) private redisSub: Redis,
     private fleetService: FleetService,
+    private alertEngine: AlertEngineService,
+    private tripDetector: TripDetectorService,
   ) {
     this.redisSub.subscribe(REDIS_CHANNELS.GPS_POSITION);
-    this.redisSub.on('message', (_channel, message) => {
-      const pos = JSON.parse(message);
-      this.fleetService.storePosition(pos).catch((err) =>
-        this.logger.error(`storePosition failed: ${err}`),
-      );
-      if (pos.organizationId) {
-        this.server.to(`org:${pos.organizationId}`).emit('position', pos);
+    this.redisSub.on('message', (_channel, message) => this.handlePosition(message));
+  }
+
+  private async handlePosition(message: string): Promise<void> {
+    const pos = JSON.parse(message);
+    try {
+      const vehicle = await this.fleetService.storePosition(pos);
+      if (!vehicle || !pos.organizationId) return;
+
+      this.server.to(`org:${pos.organizationId}`).emit('position', pos);
+
+      const alert = await this.alertEngine.evaluate(pos, vehicle.id, pos.organizationId);
+      if (alert) {
+        this.server.to(`org:${pos.organizationId}`).emit('alert', alert);
       }
-    });
+
+      await this.tripDetector.process(pos, vehicle.id);
+    } catch (err) {
+      this.logger.error(`Position processing failed: ${err}`);
+    }
   }
 
   handleConnection(client: Socket) {

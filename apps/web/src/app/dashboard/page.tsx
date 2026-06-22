@@ -4,7 +4,8 @@ import dynamic from 'next/dynamic';
 import { useFleetSocket } from '@/lib/socket';
 import { useAuth } from '@/lib/auth';
 import useSWR from 'swr';
-import { getFleetPositions } from '@/lib/api';
+import { getFleetPositions, getGeofences } from '@/lib/api';
+import AlertBell from '@/components/AlertBell';
 
 const Map = dynamic(() => import('@/components/Map'), { ssr: false });
 
@@ -31,10 +32,10 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const livePositions = useFleetSocket(user?.organizationId ?? null);
 
-  // Seed initial positions from REST, then WebSocket takes over
   const { data: initial } = useSWR('fleet-positions', getFleetPositions, {
     revalidateOnFocus: false,
   });
+  const { data: geofences } = useSWR('geofences', getGeofences, { revalidateOnFocus: false });
 
   // Merge REST snapshot with live WS updates
   const seedPositions: Record<string, any> = {};
@@ -60,12 +61,15 @@ export default function DashboardPage() {
             Real-time vehicle positions
           </p>
         </div>
-        <StatusBadge active={active} idle={idle} offline={offline} />
+        <div className="flex items-center gap-3">
+          <StatusBadge active={active} idle={idle} offline={offline} />
+          <AlertBell orgId={user?.organizationId ?? null} />
+        </div>
       </div>
 
       {/* Map — fills remaining height */}
       <div className="flex-1 relative">
-        <Map positions={positions} />
+        <Map positions={positions} geofences={geofences ?? []} />
 
         {/* Vehicle count chip */}
         <div className="absolute bottom-4 right-4 z-[1000] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 shadow-lg text-sm font-medium text-slate-700 dark:text-slate-300">

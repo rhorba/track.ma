@@ -15,9 +15,9 @@ export class FleetService {
     @Inject(REDIS_CLIENT) private redis: Redis,
   ) {}
 
-  async storePosition(pos: GpsPosition): Promise<void> {
+  async storePosition(pos: GpsPosition): Promise<Vehicle | null> {
     const vehicle = await this.vehiclesRepo.findOne({ where: { imei: pos.imei } });
-    if (!vehicle) return;
+    if (!vehicle) return null;
 
     const position = this.positionsRepo.create({
       vehicleId: vehicle.id,
@@ -45,6 +45,7 @@ export class FleetService {
     // Update vehicle status
     const status = pos.ignition ? (pos.speed > 0 ? 'active' : 'idle') : 'offline';
     await this.vehiclesRepo.update(vehicle.id, { status });
+    return vehicle;
   }
 
   async getLatestPositions(organizationId: string) {

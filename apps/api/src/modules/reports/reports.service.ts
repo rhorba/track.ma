@@ -12,12 +12,31 @@ export class ReportsService {
   ) {}
 
   async getFleetSummary(organizationId: string, from: Date, to: Date) {
-    const trips = await this.tripsRepo
+    const result = await this.tripsRepo
       .createQueryBuilder('t')
       .innerJoin('t.vehicle', 'v', 'v.organizationId = :organizationId', { organizationId })
       .where('t.startedAt BETWEEN :from AND :to', { from, to })
-      .select(['SUM(t.distanceKm) AS totalKm', 'SUM(t.fuelConsumedL) AS totalFuel', 'COUNT(t.id) AS totalTrips'])
+      .andWhere('t.isComplete = true')
+      .select([
+        'COALESCE(SUM(t.distanceKm), 0) AS "totalKm"',
+        'COALESCE(SUM(t.fuelConsumedL), 0) AS "totalFuel"',
+        'COUNT(t.id) AS "totalTrips"',
+        'COALESCE(AVG(t.avgSpeedKmh), 0) AS "avgSpeed"',
+      ])
       .getRawOne();
-    return trips;
+    return result;
+  }
+
+  getTrips(organizationId: string, vehicleId: string | undefined, from: Date, to: Date) {
+    const qb = this.tripsRepo
+      .createQueryBuilder('t')
+      .innerJoinAndSelect('t.vehicle', 'v', 'v.organizationId = :organizationId', { organizationId })
+      .where('t.startedAt BETWEEN :from AND :to', { from, to })
+      .andWhere('t.isComplete = true')
+      .orderBy('t.startedAt', 'DESC')
+      .take(200);
+
+    if (vehicleId) qb.andWhere('t.vehicleId = :vehicleId', { vehicleId });
+    return qb.getMany();
   }
 }

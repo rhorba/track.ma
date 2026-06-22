@@ -52,3 +52,36 @@ export function useFleetSocket(orgId: string | null) {
 
   return positions;
 }
+
+export interface LiveAlert {
+  id: string;
+  vehicleId: string;
+  type: string;
+  severity: 'info' | 'warning' | 'critical';
+  message: string;
+  triggeredAt: string;
+  acknowledged: boolean;
+}
+
+export function useAlertSocket(orgId: string | null) {
+  const [alerts, setAlerts] = useState<LiveAlert[]>([]);
+
+  useEffect(() => {
+    if (!orgId) return;
+    const s = getSocket();
+    if (!s.connected) s.connect();
+
+    s.on('alert', (alert: LiveAlert) => {
+      setAlerts((prev) => [alert, ...prev].slice(0, 50));
+    });
+
+    return () => {
+      s.off('alert');
+    };
+  }, [orgId]);
+
+  const dismiss = (id: string) =>
+    setAlerts((prev) => prev.map((a) => (a.id === id ? { ...a, acknowledged: true } : a)));
+
+  return { alerts, dismiss };
+}

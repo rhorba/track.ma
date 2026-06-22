@@ -5,9 +5,15 @@ import { Vehicle } from '../../entities/vehicle.entity';
 import { FleetService } from './fleet.service';
 import { FleetGateway } from './fleet.gateway';
 import { FleetController } from './fleet.controller';
+import { AlertsModule } from '../alerts/alerts.module';
+import { TripsModule } from '../trips/trips.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Position, Vehicle])],
+  imports: [
+    TypeOrmModule.forFeature([Position, Vehicle]),
+    AlertsModule,
+    TripsModule,
+  ],
   controllers: [FleetController],
   providers: [FleetService, FleetGateway],
   exports: [FleetService],

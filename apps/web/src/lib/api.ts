@@ -28,3 +28,21 @@ export const deleteVehicle = (id: string) => api.delete(`/vehicles/${id}`).then(
 
 // Fleet
 export const getFleetPositions = () => api.get('/fleet/positions').then((r) => r.data);
+
+// Alerts
+export const getAlerts = () => api.get('/alerts').then((r) => r.data);
+export const getRules = () => api.get('/alerts/rules').then((r) => r.data);
+export const createRule = (data: object) => api.post('/alerts/rules', data).then((r) => r.data);
+export const acknowledgeAlert = (id: string) =>
+  api.patch(`/alerts/${id}/acknowledge`).then((r) => r.data);
+
+// Geofences
+export const getGeofences = () => api.get('/geofences').then((r) => r.data);
+export const createGeofence = (data: object) => api.post('/geofences', data).then((r) => r.data);
+export const deleteGeofence = (id: string) => api.delete(`/geofences/${id}`).then((r) => r.data);
+
+// Reports
+export const getFleetSummary = (from?: string, to?: string) =>
+  api.get('/reports/summary', { params: { from, to } }).then((r) => r.data);
+export const getTripReport = (vehicleId?: string, from?: string, to?: string) =>
+  api.get('/reports/trips', { params: { vehicleId, from, to } }).then((r) => r.data);

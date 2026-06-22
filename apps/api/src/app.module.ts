@@ -13,6 +13,7 @@ import { ReportsModule } from './modules/reports/reports.module';
 import { BillingModule } from './modules/billing/billing.module';
 import { RedisModule } from './modules/redis/redis.module';
 import { MailModule } from './modules/mail/mail.module';
+import { GeofencesModule } from './modules/geofences/geofences.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { MailModule } from './modules/mail/mail.module';
     AlertsModule,
     TripsModule,
     ReportsModule,
+    GeofencesModule,
     BillingModule,
   ],
 })
