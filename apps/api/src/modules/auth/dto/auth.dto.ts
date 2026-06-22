@@ -26,5 +26,8 @@ export class LoginDto {
 
 export class RefreshTokenDto {
   @IsString()
+  userId: string;
+
+  @IsString()
   refreshToken: string;
 }

@@ -17,8 +17,8 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
     try {
-      const { access_token } = await login(email, password);
-      saveToken(access_token);
+      const { accessToken } = await login(email, password);
+      saveToken(accessToken);
       router.push('/dashboard');
     } catch {
       setError('Invalid email or password.');

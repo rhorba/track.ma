@@ -17,7 +17,7 @@ function parseJwt(token: string): AuthUser | null {
       id: payload.sub,
       email: payload.email,
       name: payload.name ?? payload.email,
-      organizationId: payload.organizationId,
+      organizationId: payload.orgId,
       role: payload.role,
     };
   } catch {

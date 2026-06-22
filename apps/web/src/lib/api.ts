@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001',
+  baseURL: `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'}/api`,
 });
 
 api.interceptors.request.use((config) => {
@@ -14,7 +14,7 @@ export default api;
 
 // Auth
 export const login = (email: string, password: string) =>
-  api.post<{ access_token: string }>('/auth/login', { email, password }).then((r) => r.data);
+  api.post<{ accessToken: string }>('/auth/login', { email, password }).then((r) => r.data);
 
 export const register = (data: { name: string; email: string; password: string; organizationName: string }) =>
   api.post('/auth/register', data).then((r) => r.data);

@@ -2,6 +2,81 @@
 
 ---
 
+## SESSION_END — 2026-06-22 (CTS Framework Gap Fix)
+
+**What was done** — 7 cross-cutting bugs fixed before Sprint 4:
+1. `apps/web/src/lib/api.ts` — added `/api` prefix to baseURL (all API calls were 404)
+2. `apps/web/src/lib/api.ts` + `login/page.tsx` — fixed `access_token` → `accessToken` (login was saving `undefined`)
+3. `apps/web/src/lib/auth.ts` — fixed JWT field `payload.organizationId` → `payload.orgId` (org context always undefined)
+4. `apps/api/src/modules/auth/auth.service.ts` — added `name` to JWT payload
+5. `apps/api/src/main.ts` — added `{ rawBody: true }` to NestFactory (Stripe webhook was crashing)
+6. `apps/api/src/modules/auth/dto/auth.dto.ts` + `auth.controller.ts` — added `userId` to RefreshTokenDto; refresh used `req.user?.id` with no guard (always undefined)
+7. `apps/api/src/modules/vehicles/vehicles.service.ts` + `vehicles.module.ts` — enforced org `vehicleLimit` on vehicle create (billing tiers were ignored)
+
+**Test results**: 27/27 passing, 0 TS errors (API + Web)
+**Next session**: Sprint 4 — Billing, Multi-tenancy & Onboarding
+
+---
+
+## SESSION_END — 2026-06-22 (Sprint 3)
+
+**What was done**:
+- Backend: `geo.util.ts` — `pointInPolygon` (ray-casting) + `haversineKm` utilities
+- Backend: `AlertEngineService` — evaluates speeding/ignition/geofence/low-fuel rules on every GPS position with 5-min dedup; returns fired `Alert` entity
+- Backend: `TripDetectorService` — in-memory open trip tracking; opens on ignition ON, accumulates Haversine distance + max/avg speed, closes on ignition OFF
+- Backend: `FleetGateway` updated — calls `alertEngine.evaluate()` and `tripDetector.process()` after each position; emits `alert` WS event to org room; `storePosition()` now returns `Vehicle`
+- Backend: `GeofencesModule` — `GET /geofences`, `POST /geofences` (validates ≥ 3 points), `DELETE /geofences/:id` (soft-delete)
+- Backend: `ReportsService/Controller` — added `GET /reports/trips?vehicleId=&from=&to=`
+- Backend: `AlertsService` — added `getGeofences`, `createGeofence`, `deleteGeofence`
+- Frontend: `lib/api.ts` — added alerts, geofences, reports API calls
+- Frontend: `lib/socket.ts` — added `useAlertSocket` hook (subscribes to `alert` WS events)
+- Frontend: `AlertBell.tsx` — bell icon with unread badge, slide-out drawer, acknowledge button
+- Frontend: `/alerts` page — alert history table with type/severity/vehicle/message/time/acknowledge
+- Frontend: `/reports` page — fleet summary cards (trips, km, avg speed, fuel) + trip history table
+- Frontend: `Map.tsx` — geofence polygons as purple overlays with tooltips
+- 26 unit tests (geo utility, alert engine incl. geofence branch, trip detector, geofences service); Sprint 3 files >80% coverage
+- Commit `25cb4c2`, pushed to main
+
+**Next session**: Sprint 4 — Billing, Multi-tenancy & Onboarding
+  - Story 4.1: Stripe subscription integration (billing module already scaffolded)
+  - Story 4.2: Plan limits enforcement (vehicle count per plan)
+  - Story 4.3: Onboarding wizard (org setup + first vehicle + invite users)
+  - Story 4.4: User invitation flow (email invite → accept link)
+  - Story 4.5: Admin panel (org management, user roles)
+  - Story 4.6: Usage dashboard (API calls, active vehicles, billing status)
+
+**Repo**: https://github.com/rhorba/track.ma.git
+**Branch**: main
+
+---
+
+## SESSION_END — 2026-06-22 (Sprint 2)
+
+**What was done**:
+- Backend: added `organizationId` to `GpsPosition` shared type
+- Backend: `FleetGateway` now persists positions via `storePosition()` + broadcasts to org room
+- Backend: new `FleetController` — `GET /fleet/positions`, `GET /fleet/history/:vehicleId`
+- Frontend: installed leaflet, react-leaflet, socket.io-client, axios, swr, next-themes
+- Frontend: `ThemeProvider` + dark/light toggle in sidebar (next-themes)
+- Frontend: login page, dashboard with Leaflet live map (CartoDB Dark Matter tiles)
+- Frontend: vehicles CRUD page (table + add/edit/delete modal)
+- Frontend: `Map.tsx` + `VehicleMarker.tsx` (heading arrow, ignition color, popup)
+- Frontend: `lib/api.ts` (axios client), `lib/socket.ts` (WebSocket hook), `lib/auth.ts` (JWT helper)
+- All TS checks pass (0 errors). Pushed: commit 9836df6
+
+**Next session**: Sprint 3 — Alerts, Geofences & Reporting
+  - Story 3.1: Alert rule engine (speed, geofence, ignition events)
+  - Story 3.2: Geofence CRUD API + polygon drawing on map
+  - Story 3.3: Real-time alert notifications (WebSocket + bell icon)
+  - Story 3.4: Trip detection + auto-close logic
+  - Story 3.5: Reports page (mileage, fuel, trip history)
+  - Story 3.6: Alert history page
+
+**Repo**: https://github.com/rhorba/track.ma.git
+**Branch**: main
+
+---
+
 ## SESSION_END — 2026-06-22
 
 **Duration**: Multi-session (compacted from previous context)
