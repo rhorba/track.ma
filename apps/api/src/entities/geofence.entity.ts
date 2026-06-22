@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index, ManyToOne, JoinColumn } from 'typeorm';
 import { Organization } from './organization.entity';
 
 @Entity('geofences')
+@Index(['organizationId', 'isActive'])
 export class Geofence {
   @PrimaryGeneratedColumn('uuid')
   id: string;

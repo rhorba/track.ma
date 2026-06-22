@@ -189,3 +189,10 @@
 **Repo**: https://github.com/rhorba/track.ma.git
 **Branch**: main
 **Local path**: C:\Users\moham\OneDrive - um5.ac.ma\Desktop\compititor\track.ma
+
+---
+
+## SESSION_START — 2026-06-22 (Sprint 6: Security, Polish & Launch)
+
+**Resumed from**: Sprint 5 complete (GPS hardening, Production Dockerfiles, CI gates, Playwright E2E)
+**Pending**: Sprint 6 — Security hardening, Demo mode, DB perf audit, Public landing page, FR/AR i18n

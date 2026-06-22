@@ -1,8 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index, ManyToOne, JoinColumn } from 'typeorm';
 import { Vehicle } from './vehicle.entity';
 import { AlertRule } from './alert-rule.entity';
 
 @Entity('alerts')
+@Index(['vehicleId', 'triggeredAt'])
+@Index(['vehicleId', 'acknowledged'])
 export class Alert {
   @PrimaryGeneratedColumn('uuid')
   id: string;

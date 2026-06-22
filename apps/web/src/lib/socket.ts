@@ -63,6 +63,26 @@ export interface LiveAlert {
   acknowledged: boolean;
 }
 
+export function useDemoSocket() {
+  const [positions, setPositions] = useState<Record<string, LivePosition>>({});
+
+  useEffect(() => {
+    const s = getSocket();
+    if (!s.connected) s.connect();
+    s.emit('join-demo');
+
+    s.on('position', (pos: LivePosition) => {
+      setPositions((prev) => ({ ...prev, [pos.vehicleId]: pos }));
+    });
+
+    return () => {
+      s.off('position');
+    };
+  }, []);
+
+  return positions;
+}
+
 export function useAlertSocket(orgId: string | null) {
   const [alerts, setAlerts] = useState<LiveAlert[]>([]);
 

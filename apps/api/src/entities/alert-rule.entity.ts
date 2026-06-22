@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index, ManyToOne, JoinColumn } from 'typeorm';
 import { Organization } from './organization.entity';
 import { Vehicle } from './vehicle.entity';
 
 export type AlertRuleType = 'speeding' | 'geofence_enter' | 'geofence_exit' | 'ignition_on' | 'ignition_off' | 'low_fuel' | 'offline';
 
 @Entity('alert_rules')
+@Index(['organizationId', 'isActive'])
 export class AlertRule {
   @PrimaryGeneratedColumn('uuid')
   id: string;

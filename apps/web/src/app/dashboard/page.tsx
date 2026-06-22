@@ -14,15 +14,15 @@ function StatusBadge({ active, idle, offline }: { active: number; idle: number; 
     <div className="flex items-center gap-4 text-sm">
       <span className="flex items-center gap-1.5">
         <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
-        <span className="text-slate-600 dark:text-slate-400">{active} Active</span>
+        <span className="text-slate-600 dark:text-slate-400">{active} En marche</span>
       </span>
       <span className="flex items-center gap-1.5">
         <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
-        <span className="text-slate-600 dark:text-slate-400">{idle} Idle</span>
+        <span className="text-slate-600 dark:text-slate-400">{idle} À l'arrêt</span>
       </span>
       <span className="flex items-center gap-1.5">
         <span className="w-2 h-2 rounded-full bg-slate-400 inline-block" />
-        <span className="text-slate-600 dark:text-slate-400">{offline} Offline</span>
+        <span className="text-slate-600 dark:text-slate-400">{offline} Hors ligne</span>
       </span>
     </div>
   );
@@ -56,9 +56,9 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
         <div>
-          <h1 className="text-lg font-semibold text-slate-900 dark:text-white">Live Map</h1>
+          <h1 className="text-lg font-semibold text-slate-900 dark:text-white">Carte en direct</h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Real-time vehicle positions
+            Positions des véhicules en temps réel
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -73,7 +73,7 @@ export default function DashboardPage() {
 
         {/* Vehicle count chip */}
         <div className="absolute bottom-4 right-4 z-[1000] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 shadow-lg text-sm font-medium text-slate-700 dark:text-slate-300">
-          {values.length} vehicles tracked
+          {values.length} véhicule{values.length !== 1 ? 's' : ''} suivi{values.length !== 1 ? 's' : ''}
         </div>
       </div>
     </div>

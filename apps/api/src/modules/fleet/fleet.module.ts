@@ -5,6 +5,7 @@ import { Vehicle } from '../../entities/vehicle.entity';
 import { FleetService } from './fleet.service';
 import { FleetGateway } from './fleet.gateway';
 import { FleetController } from './fleet.controller';
+import { DemoService } from './demo.service';
 import { AlertsModule } from '../alerts/alerts.module';
 import { TripsModule } from '../trips/trips.module';
 
@@ -15,7 +16,7 @@ import { TripsModule } from '../trips/trips.module';
     TripsModule,
   ],
   controllers: [FleetController],
-  providers: [FleetService, FleetGateway],
-  exports: [FleetService],
+  providers: [FleetService, FleetGateway, DemoService],
+  exports: [FleetService, DemoService],
 })
 export class FleetModule {}

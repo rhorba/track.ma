@@ -7,11 +7,11 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth';
 
 const NAV = [
-  { href: '/dashboard', label: 'Dashboard', icon: '◈', adminOnly: false },
-  { href: '/vehicles', label: 'Vehicles', icon: '⊡', adminOnly: false },
-  { href: '/alerts', label: 'Alerts', icon: '◎', adminOnly: false },
-  { href: '/reports', label: 'Reports', icon: '▤', adminOnly: false },
-  { href: '/billing', label: 'Billing', icon: '◷', adminOnly: false },
+  { href: '/dashboard', label: 'Tableau de bord', icon: '◈', adminOnly: false },
+  { href: '/vehicles', label: 'Véhicules', icon: '⊡', adminOnly: false },
+  { href: '/alerts', label: 'Alertes', icon: '◎', adminOnly: false },
+  { href: '/reports', label: 'Rapports', icon: '▤', adminOnly: false },
+  { href: '/billing', label: 'Abonnement', icon: '◷', adminOnly: false },
   { href: '/admin', label: 'Admin', icon: '⚙', adminOnly: true },
 ];
 
@@ -61,9 +61,9 @@ export default function Sidebar() {
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           >
-            <span>{theme === 'dark' ? '☀ Light mode' : '☾ Dark mode'}</span>
+            <span>{theme === 'dark' ? '☀ Mode clair' : '☾ Mode sombre'}</span>
             <span className="text-xs bg-slate-700 px-2 py-0.5 rounded-full">
-              {theme === 'dark' ? 'Dark' : 'Light'}
+              {theme === 'dark' ? 'Sombre' : 'Clair'}
             </span>
           </button>
         )}

@@ -32,39 +32,39 @@ export default function ReportsPage() {
   return (
     <div className="flex flex-col h-screen bg-slate-50 dark:bg-slate-950 overflow-auto">
       <div className="px-6 py-5 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
-        <h1 className="text-lg font-semibold text-slate-900 dark:text-white">Reports</h1>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Last 30 days — fleet performance</p>
+        <h1 className="text-lg font-semibold text-slate-900 dark:text-white">Rapports</h1>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">30 derniers jours — performance de la flotte</p>
       </div>
 
       <div className="p-6 space-y-6">
         {/* Summary cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard label="Total Trips" value={Number(summary?.totalTrips ?? 0)} />
+          <StatCard label="Trajets" value={Number(summary?.totalTrips ?? 0)} />
           <StatCard label="Distance" value={Number(summary?.totalKm ?? 0)} unit="km" />
-          <StatCard label="Avg Speed" value={Number(summary?.avgSpeed ?? 0)} unit="km/h" />
-          <StatCard label="Fuel Used" value={Number(summary?.totalFuel ?? 0)} unit="L" />
+          <StatCard label="Vitesse moy." value={Number(summary?.avgSpeed ?? 0)} unit="km/h" />
+          <StatCard label="Carburant" value={Number(summary?.totalFuel ?? 0)} unit="L" />
         </div>
 
         {/* Trip list */}
         <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden">
           <div className="px-5 py-3 border-b border-slate-200 dark:border-slate-800">
-            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Trip History</h2>
+            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Historique des trajets</h2>
           </div>
 
           {isLoading ? (
-            <p className="px-5 py-6 text-sm text-slate-500">Loading…</p>
+            <p className="px-5 py-6 text-sm text-slate-500">Chargement…</p>
           ) : trips.length === 0 ? (
-            <p className="px-5 py-6 text-sm text-slate-400 text-center">No trips recorded yet</p>
+            <p className="px-5 py-6 text-sm text-slate-400 text-center">Aucun trajet enregistré</p>
           ) : (
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-800 text-xs text-slate-400 uppercase tracking-wide">
-                  <th className="px-4 py-3 text-left font-medium">Vehicle</th>
-                  <th className="px-4 py-3 text-left font-medium">Started</th>
-                  <th className="px-4 py-3 text-left font-medium">Duration</th>
+                  <th className="px-4 py-3 text-left font-medium">Véhicule</th>
+                  <th className="px-4 py-3 text-left font-medium">Départ</th>
+                  <th className="px-4 py-3 text-left font-medium">Durée</th>
                   <th className="px-4 py-3 text-left font-medium">Distance</th>
-                  <th className="px-4 py-3 text-left font-medium">Max Speed</th>
-                  <th className="px-4 py-3 text-left font-medium">Avg Speed</th>
+                  <th className="px-4 py-3 text-left font-medium">Vit. max</th>
+                  <th className="px-4 py-3 text-left font-medium">Vit. moy.</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">

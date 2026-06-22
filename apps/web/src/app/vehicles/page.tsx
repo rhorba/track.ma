@@ -83,16 +83,16 @@ export default function VehiclesPage() {
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
         <div>
-          <h1 className="text-lg font-semibold text-slate-900 dark:text-white">Vehicles</h1>
+          <h1 className="text-lg font-semibold text-slate-900 dark:text-white">Véhicules</h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            {vehicles.length} registered
+            {vehicles.length} enregistré{vehicles.length !== 1 ? 's' : ''}
           </p>
         </div>
         <button
           onClick={openAdd}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors"
         >
-          + Add vehicle
+          + Ajouter un véhicule
         </button>
       </div>
 
@@ -102,11 +102,11 @@ export default function VehiclesPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-800 text-left">
-                <th className="px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Name</th>
-                <th className="px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Plate</th>
+                <th className="px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Nom</th>
+                <th className="px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Immatriculation</th>
                 <th className="px-4 py-3 font-medium text-slate-500 dark:text-slate-400">IMEI</th>
-                <th className="px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Make / Model</th>
-                <th className="px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Status</th>
+                <th className="px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Marque / Modèle</th>
+                <th className="px-4 py-3 font-medium text-slate-500 dark:text-slate-400">Statut</th>
                 <th className="px-4 py-3 font-medium text-slate-500 dark:text-slate-400 text-right">Actions</th>
               </tr>
             </thead>
@@ -114,7 +114,7 @@ export default function VehiclesPage() {
               {vehicles.length === 0 && (
                 <tr>
                   <td colSpan={6} className="px-4 py-12 text-center text-slate-400">
-                    No vehicles yet. Add your first one.
+                    Aucun véhicule. Ajoutez le premier.
                   </td>
                 </tr>
               )}
@@ -134,14 +134,14 @@ export default function VehiclesPage() {
                       onClick={() => openEdit(v)}
                       className="text-blue-600 hover:text-blue-700 dark:text-blue-400 font-medium mr-4"
                     >
-                      Edit
+                      Modifier
                     </button>
                     <button
                       onClick={() => handleDelete(v.id)}
                       disabled={deleteId === v.id}
                       className="text-red-500 hover:text-red-600 disabled:opacity-40"
                     >
-                      {deleteId === v.id ? '…' : 'Delete'}
+                      {deleteId === v.id ? '…' : 'Supprimer'}
                     </button>
                   </td>
                 </tr>
@@ -157,19 +157,19 @@ export default function VehiclesPage() {
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md mx-4">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
               <h2 className="font-semibold text-slate-900 dark:text-white">
-                {modal === 'add' ? 'Add vehicle' : 'Edit vehicle'}
+                {modal === 'add' ? 'Ajouter un véhicule' : 'Modifier le véhicule'}
               </h2>
               <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl leading-none">&times;</button>
             </div>
             <form onSubmit={handleSave} className="p-6 space-y-4">
               {(
                 [
-                  ['name', 'Name', 'text', 'e.g. Truck #1'],
-                  ['licensePlate', 'License plate', 'text', 'e.g. 12345-A-7'],
-                  ['imei', 'Device IMEI', 'text', '15-digit IMEI'],
-                  ['make', 'Make', 'text', 'e.g. Mercedes'],
-                  ['model', 'Model', 'text', 'e.g. Sprinter'],
-                  ['year', 'Year', 'number', '2024'],
+                  ['name', 'Nom du véhicule', 'text', 'ex. Camion #1'],
+                  ['licensePlate', 'Immatriculation', 'text', 'ex. 12345-A-7'],
+                  ['imei', 'IMEI du boîtier GPS', 'text', 'IMEI à 15 chiffres'],
+                  ['make', 'Marque', 'text', 'ex. Mercedes'],
+                  ['model', 'Modèle', 'text', 'ex. Sprinter'],
+                  ['year', 'Année', 'number', '2024'],
                 ] as const
               ).map(([key, label, type, placeholder]) => (
                 <div key={key}>
@@ -189,10 +189,10 @@ export default function VehiclesPage() {
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={closeModal} className="flex-1 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
-                  Cancel
+                  Annuler
                 </button>
                 <button type="submit" disabled={loading} className="flex-1 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-semibold transition">
-                  {loading ? 'Saving…' : 'Save'}
+                  {loading ? 'Enregistrement…' : 'Enregistrer'}
                 </button>
               </div>
             </form>

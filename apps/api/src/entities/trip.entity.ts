@@ -1,7 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index, ManyToOne, JoinColumn } from 'typeorm';
 import { Vehicle } from './vehicle.entity';
 
 @Entity('trips')
+@Index(['vehicleId', 'startedAt'])
+@Index(['vehicleId', 'isComplete'])
 export class Trip {
   @PrimaryGeneratedColumn('uuid')
   id: string;

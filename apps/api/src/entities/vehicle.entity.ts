@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Organization } from './organization.entity';
 
 export type VehicleType = 'car' | 'truck' | 'van' | 'motorcycle' | 'boat' | 'scooter';
 export type VehicleStatus = 'active' | 'idle' | 'offline' | 'maintenance';
 
 @Entity('vehicles')
+@Index(['organizationId', 'isActive'])
 export class Vehicle {
   @PrimaryGeneratedColumn('uuid')
   id: string;

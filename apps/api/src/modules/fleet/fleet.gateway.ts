@@ -62,4 +62,9 @@ export class FleetGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleJoin(@ConnectedSocket() client: Socket, @MessageBody() data: { orgId: string }) {
     client.join(`org:${data.orgId}`);
   }
+
+  @SubscribeMessage('join-demo')
+  handleJoinDemo(@ConnectedSocket() client: Socket) {
+    client.join('demo');
+  }
 }

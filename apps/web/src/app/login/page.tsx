@@ -21,7 +21,7 @@ export default function LoginPage() {
       saveToken(accessToken);
       router.push('/dashboard');
     } catch {
-      setError('Invalid email or password.');
+      setError('Email ou mot de passe incorrect.');
     } finally {
       setLoading(false);
     }
@@ -39,13 +39,13 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 p-8">
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">Sign in</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Enter your credentials to access your fleet</p>
+          <h1 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">Connexion</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Entrez vos identifiants pour accéder à votre flotte</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Email
+                Adresse email
               </label>
               <input
                 type="email"
@@ -59,7 +59,7 @@ export default function LoginPage() {
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Password
+                Mot de passe
               </label>
               <input
                 type="password"
@@ -82,7 +82,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors"
             >
-              {loading ? 'Signing in…' : 'Sign in'}
+              {loading ? 'Connexion…' : 'Se connecter'}
             </button>
           </form>
         </div>

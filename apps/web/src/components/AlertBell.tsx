@@ -53,14 +53,14 @@ export default function AlertBell({ orgId }: { orgId: string | null }) {
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className="absolute right-0 top-11 z-50 w-80 max-h-96 overflow-y-auto rounded-xl border border-slate-700 bg-slate-900 shadow-xl">
             <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
-              <span className="text-sm font-semibold text-white">Alerts</span>
+              <span className="text-sm font-semibold text-white">Alertes</span>
               {unread > 0 && (
-                <span className="text-xs text-slate-400">{unread} unread</span>
+                <span className="text-xs text-slate-400">{unread} non lue{unread > 1 ? 's' : ''}</span>
               )}
             </div>
 
             {alerts.length === 0 ? (
-              <p className="px-4 py-6 text-sm text-slate-500 text-center">No alerts</p>
+              <p className="px-4 py-6 text-sm text-slate-500 text-center">Aucune alerte</p>
             ) : (
               <ul className="divide-y divide-slate-800">
                 {alerts.map((alert) => (
