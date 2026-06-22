@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength, IsOptional } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsOptional, IsUUID } from 'class-validator';
 
 export class RegisterDto {
   @IsString()
@@ -30,4 +30,16 @@ export class RefreshTokenDto {
 
   @IsString()
   refreshToken: string;
+}
+
+export class AcceptInviteDto {
+  @IsString()
+  token: string;
+
+  @IsString()
+  name: string;
+
+  @IsString()
+  @MinLength(8)
+  password: string;
 }

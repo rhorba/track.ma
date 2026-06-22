@@ -2,6 +2,27 @@
 
 ---
 
+## SESSION_END — 2026-06-22 (Sprint 4: Billing, Multi-tenancy & Onboarding)
+
+**What was done**:
+- Entity: `UserInvite` — token (256-bit), email, orgId FK, role, expiresAt, acceptedAt, isActive; partial indexes on org+active and email+org
+- Backend: `InviteService.send` — deactivates stale pending invite, generates crypto token, 48h expiry, sends email via MailService
+- Backend: `POST /users/invite` (org_admin only) — body: { email, role }
+- Backend: `POST /auth/accept-invite` — validates token, atomic single-use update, creates user with invite role
+- Backend: `PATCH /users/:id/role` (org_admin only) — cannot change own role
+- Backend: `GET /organizations/me/usage` — vehicle count, user count, tier, vehicleLimit, subscriptionStatus
+- Frontend: `/billing` — plan cards (trial/starter/pro/business), usage bar with near-limit warning, Stripe checkout trigger
+- Frontend: `/admin` — team table with inline role dropdown (admin only), invite modal
+- Frontend: `/onboarding` — 3-step wizard (welcome → add vehicle → invite teammate)
+- Frontend: `/accept-invite?token=X` — set name+password, creates account, redirects to login
+- Frontend: Sidebar updated with Billing + Admin (admin-only) links
+- Tests: 43/43 passing (16 new — InviteService × 5, AuthService.acceptInvite × 5, OrganizationsService.getUsage × 4 + existing 27)
+- 0 TS errors (API + Web)
+
+**Next session**: Sprint 5 — GPS ingestion hardening, E2E with Playwright, production Docker + CI/CD
+
+---
+
 ## SESSION_END — 2026-06-22 (CTS Framework Gap Fix)
 
 **What was done** — 7 cross-cutting bugs fixed before Sprint 4:

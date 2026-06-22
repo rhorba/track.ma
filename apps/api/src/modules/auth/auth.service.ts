@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcryptjs';
 import { User } from '../../entities/user.entity';
 import { Organization } from '../../entities/organization.entity';
+import { UserInvite } from '../../entities/user-invite.entity';
 import { RegisterDto, LoginDto } from './dto/auth.dto';
 
 @Injectable()
@@ -13,6 +14,7 @@ export class AuthService {
   constructor(
     @InjectRepository(User) private usersRepo: Repository<User>,
     @InjectRepository(Organization) private orgsRepo: Repository<Organization>,
+    @InjectRepository(UserInvite) private invitesRepo: Repository<UserInvite>,
     private jwtService: JwtService,
     private config: ConfigService,
   ) {}
@@ -68,6 +70,32 @@ export class AuthService {
 
   async logout(userId: string) {
     await this.usersRepo.update(userId, { refreshTokenHash: undefined });
+  }
+
+  async acceptInvite(token: string, name: string, password: string) {
+    const invite = await this.invitesRepo.findOne({ where: { token, isActive: true } });
+    if (!invite) throw new NotFoundException('Invalid or expired invite token');
+    if (invite.expiresAt < new Date()) throw new BadRequestException('Invite token has expired');
+
+    const existing = await this.usersRepo.findOne({ where: { email: invite.email } });
+    if (existing) throw new ConflictException('An account with this email already exists');
+
+    const updated = await this.invitesRepo.update(
+      { id: invite.id, isActive: true },
+      { isActive: false, acceptedAt: new Date() },
+    );
+    if (!updated.affected) throw new BadRequestException('Invite already accepted');
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    const entity = this.usersRepo.create({
+      name,
+      email: invite.email,
+      passwordHash,
+      role: invite.role as any,
+      organizationId: invite.organizationId,
+    });
+    const user = await this.usersRepo.save(entity);
+    return this.issueTokens(user);
   }
 
   private async issueTokens(user: User) {

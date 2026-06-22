@@ -11,4 +11,9 @@ export class OrganizationsController {
   getMyOrg(@Request() req: any) {
     return this.service.findById(req.user.organizationId);
   }
+
+  @Get('me/usage')
+  getUsage(@Request() req: any) {
+    return this.service.getUsage(req.user.organizationId);
+  }
 }

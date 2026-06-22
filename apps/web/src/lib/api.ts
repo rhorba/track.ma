@@ -46,3 +46,19 @@ export const getFleetSummary = (from?: string, to?: string) =>
   api.get('/reports/summary', { params: { from, to } }).then((r) => r.data);
 export const getTripReport = (vehicleId?: string, from?: string, to?: string) =>
   api.get('/reports/trips', { params: { vehicleId, from, to } }).then((r) => r.data);
+
+// Users & Invites
+export const getTeam = () => api.get('/users/team').then((r) => r.data);
+export const inviteUser = (email: string, role: string) =>
+  api.post('/users/invite', { email, role }).then((r) => r.data);
+export const updateUserRole = (id: string, role: string) =>
+  api.patch(`/users/${id}/role`, { role }).then((r) => r.data);
+export const acceptInvite = (token: string, name: string, password: string) =>
+  api.post('/auth/accept-invite', { token, name, password }).then((r) => r.data);
+
+// Organizations
+export const getUsage = () => api.get('/organizations/me/usage').then((r) => r.data);
+
+// Billing
+export const createCheckout = (priceId: string, returnUrl: string) =>
+  api.post('/billing/checkout', { priceId, returnUrl }).then((r) => r.data);

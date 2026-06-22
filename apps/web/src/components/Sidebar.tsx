@@ -4,17 +4,21 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/lib/auth';
 
 const NAV = [
-  { href: '/dashboard', label: 'Dashboard', icon: '◈' },
-  { href: '/vehicles', label: 'Vehicles', icon: '⊡' },
-  { href: '/alerts', label: 'Alerts', icon: '◎' },
-  { href: '/reports', label: 'Reports', icon: '▤' },
+  { href: '/dashboard', label: 'Dashboard', icon: '◈', adminOnly: false },
+  { href: '/vehicles', label: 'Vehicles', icon: '⊡', adminOnly: false },
+  { href: '/alerts', label: 'Alerts', icon: '◎', adminOnly: false },
+  { href: '/reports', label: 'Reports', icon: '▤', adminOnly: false },
+  { href: '/billing', label: 'Billing', icon: '◷', adminOnly: false },
+  { href: '/admin', label: 'Admin', icon: '⚙', adminOnly: true },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+  const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
@@ -31,7 +35,7 @@ export default function Sidebar() {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-1">
-        {NAV.map(({ href, label, icon }) => {
+        {NAV.filter(({ adminOnly }) => !adminOnly || user?.role === 'org_admin').map(({ href, label, icon }) => {
           const active = pathname.startsWith(href);
           return (
             <Link
