@@ -28,7 +28,7 @@ export class FleetGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private tripDetector: TripDetectorService,
   ) {
     this.redisSub.subscribe(REDIS_CHANNELS.GPS_POSITION);
-    this.redisSub.on('message', (_channel, message) => this.handlePosition(message));
+    this.redisSub.on('message', (_channel, message) => void this.handlePosition(message));
   }
 
   private async handlePosition(message: string): Promise<void> {

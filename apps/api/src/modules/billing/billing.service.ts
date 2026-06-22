@@ -47,7 +47,6 @@ export class BillingService {
 
     if (event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.created') {
       const sub = event.data.object as Stripe.Subscription;
-      const orgId = sub.metadata.orgId;
       const priceId = sub.items.data[0].price.id;
       const tier = this.resolveTier(priceId);
       await this.orgsRepo.update({ stripeCustomerId: sub.customer as string }, {

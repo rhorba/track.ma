@@ -2,7 +2,7 @@ import { Reflector } from '@nestjs/core';
 import { ExecutionContext } from '@nestjs/common';
 import { RolesGuard } from './roles.guard';
 
-function makeContext(role: string | undefined, requiredRoles: string[] | undefined): ExecutionContext {
+function makeContext(role: string | undefined, _requiredRoles?: string[]): ExecutionContext {
   return {
     getHandler: () => ({}),
     getClass: () => ({}),
