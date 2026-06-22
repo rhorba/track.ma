@@ -2,6 +2,25 @@
 
 ---
 
+## SESSION_END — 2026-06-23 (Sprint 6: Security, Polish & Launch)
+
+**Commit**: `8f9dfae` pushed to `origin/main`
+
+**Stories delivered**:
+- **6.1 Security**: helmet, global ThrottlerGuard (100/min), auth brute-force @Throttle(10/min), ValidationPipe forbidNonWhitelisted, typed DTOs
+- **6.4 Demo mode**: DemoService with 5 fake Casablanca vehicles + @Interval(10s) random-walk, /demo page with Leaflet map + CTA banner
+- **6.6 DB audit**: 8 CONCURRENTLY-safe performance indexes, TypeScript migration, docs/db-performance.md
+- **5.3 Landing page**: Full French marketing page (pricing in MAD: Démarrage/Pro/Entreprise), /register with plan pre-selection
+- **5.5 French UI**: All dashboard, vehicles, alerts, reports, sidebar, login pages fully translated to FR
+
+**VERIFY gate**: 134 tests, 29 suites — all green
+- Statements: 90.19% | Branches: 75.24% | Functions: 86.04% | Lines: 90.36%
+- Thresholds: stmt/fn/lines ≥80%, branches ≥70% — **all passed**
+
+**Next sprint**: Sprint 7 (or project is feature-complete for v1.0 launch)
+
+---
+
 ## SESSION_END — 2026-06-22 (Sprint 5: GPS Hardening, Production Dockerfiles, CI Gates, Playwright E2E)
 
 **What was done**:
