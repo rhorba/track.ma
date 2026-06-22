@@ -2,6 +2,46 @@
 
 ---
 
+## SESSION_END — 2026-06-22 (Sprint 5: GPS Hardening, Production Dockerfiles, CI Gates, Playwright E2E)
+
+**What was done**:
+
+### Batch 1 — GPS Ingestion Hardening
+- `mqtt-ingestion.service.ts` rewritten: `handleMessage` is now async, `.catch()` on MQTT `message` event
+- `validatePosition()` guard: checks imei is non-empty string, lat ∈ [-90,90], lng ∈ [-180,180], speed ≥ 0 (uses `isFiniteNumber` to catch NaN/Infinity)
+- `publishPosition()` uses Redis `SET NX EX 1` as per-IMEI 1-second dedup gate
+- `mqtt-ingestion.service.spec.ts` (12 tests): valid publish, invalid lat/lng/speed dropped, malformed JSON dropped, Teltonika parse, rate-limit dedup, 1s EX on key
+
+### Batch 2 — Production Dockerfiles
+- `next.config.ts`: added `output: 'standalone'`
+- `apps/web/Dockerfile`: fixed deps stage (add `pnpm-workspace.yaml package.json pnpm-lock.yaml`, `--filter web`); non-root `app` user in prod
+- `apps/api/Dockerfile`: added `pnpm-lock.yaml` to deps COPY; prod stage copies root `node_modules` (not app-specific symlinks); non-root user; `HEALTHCHECK` on `/api/health`
+- `apps/gps-ingestion/Dockerfile`: same fixes as API
+- `.dockerignore`: created — excludes `node_modules`, `.next`, `dist`, `.env`, logs
+- `docker-compose.prod.yml`: `target: prod`, `restart: unless-stopped`, Redis password auth, no volume mounts, NEXT_PUBLIC_* as build args
+- `.env.example`: expanded with `POSTGRES_PASSWORD`, `REDIS_PASSWORD`, `MAIL_FROM`, `WS_URL`
+
+### Batch 3 — CI Quality Gates
+- CI: added `tsc --noEmit` type-check steps for API, gps-ingestion, web (before lint)
+- CI: added `NEXT_PUBLIC_STRIPE_PRICE_*` env vars to web build step
+- `apps/api/package.json` jest: `coverageThreshold` → lines/functions/statements 80%, branches 70%
+- `apps/gps-ingestion/package.json` jest: same thresholds
+
+### Batch 4 — Playwright E2E
+- Installed `@playwright/test` as web devDependency; pnpm-lock.yaml updated
+- `apps/web/playwright.config.ts`: chromium-only, `webServer` (dev/start by env), CI retries + github reporter
+- `apps/web/e2e/auth.spec.ts` (4 tests): form renders, invalid creds error, loading state, redirect on success
+- `apps/web/e2e/dashboard.spec.ts` (3 tests): loads, status badges, sidebar
+- `apps/web/e2e/vehicles.spec.ts` (6 tests): table renders, plates visible, modal open/close, POST on save, Edit+Delete count
+- All tests use `page.route()` mocks — no backend needed
+- CI: `e2e` job (needs lint-and-test); installs chromium; builds web; runs `playwright test`; uploads report on failure
+
+**Commits**: `2775a9d` (Batches 1-3) + `66b5822` (Batch 4), pushed to `origin/main`
+
+**Next session**: Sprint 6 — Production deployment, monitoring, or feature polish
+
+---
+
 ## SESSION_END — 2026-06-22 (Sprint 4: Billing, Multi-tenancy & Onboarding)
 
 **What was done**:
