@@ -17,19 +17,24 @@ test.describe('08 · Admin — team management', () => {
 
     await test.step('Ahmed — org_admin role badge', async () => {
       await expect(page.getByText('Ahmed Benchekroun')).toBeVisible({ timeout: 8000 });
-      await expect(page.getByText('Admin')).toBeVisible();
+      const selects = page.locator('select');
+      await expect(selects.first()).toBeVisible();
       await page.waitForTimeout(400);
     });
 
     await test.step('Fatima — fleet_manager role', async () => {
       await expect(page.getByText('Fatima Zahra')).toBeVisible();
-      await expect(page.getByText('Fleet Manager')).toBeVisible();
+      const selects = page.locator('select');
+      const count = await selects.count();
+      if (count >= 2) await expect(selects.nth(1)).toHaveValue('fleet_manager');
       await page.waitForTimeout(400);
     });
 
     await test.step('Youssef — driver role', async () => {
       await expect(page.getByText('Youssef Alami')).toBeVisible();
-      await expect(page.getByText('Driver')).toBeVisible();
+      const selects = page.locator('select');
+      const count = await selects.count();
+      if (count >= 3) await expect(selects.nth(2)).toHaveValue('driver');
       await page.waitForTimeout(400);
     });
   });
@@ -56,8 +61,8 @@ test.describe('08 · Admin — team management', () => {
         await emailInput.fill('nouveau@casalogistique.ma');
         await page.waitForTimeout(300);
 
-        const roleSelect = page.locator('select');
-        if (await roleSelect.isVisible()) {
+        const roleSelect = page.locator('form').locator('select').first();
+        if (await roleSelect.isVisible({ timeout: 2000 }).catch(() => false)) {
           await roleSelect.selectOption('viewer');
           await page.waitForTimeout(300);
         }

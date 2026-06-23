@@ -25,22 +25,22 @@ test.describe('05 · Alerts — history and acknowledge', () => {
     });
 
     await test.step('Geofence exit alert (warning)', async () => {
-      await expect(page.getByText('Sortie de zone')).toBeVisible();
+      await expect(page.getByText('Sortie de zone').first()).toBeVisible();
       await page.waitForTimeout(400);
     });
 
     await test.step('Low fuel alert (warning)', async () => {
-      await expect(page.getByText('Carburant bas')).toBeVisible();
+      await expect(page.getByText('Carburant bas').first()).toBeVisible();
       await page.waitForTimeout(400);
     });
 
     await test.step('Ignition alert (info)', async () => {
-      await expect(page.getByText('Allumage')).toBeVisible();
+      await expect(page.getByText('Allumage').first()).toBeVisible();
       await page.waitForTimeout(400);
     });
 
     await test.step('Offline alert visible', async () => {
-      await expect(page.getByText('Hors ligne')).toBeVisible();
+      await expect(page.getByText('Hors ligne').first()).toBeVisible();
       await page.waitForTimeout(400);
     });
   });
@@ -85,8 +85,7 @@ test.describe('05 · Alerts — history and acknowledge', () => {
     await page.waitForLoadState('networkidle');
 
     await test.step('Empty state illustration visible', async () => {
-      // Should show the SVG bell icon empty state
-      await expect(page.locator('svg')).toBeVisible({ timeout: 8000 });
+      await expect(page.locator('main').locator('svg').first()).toBeVisible({ timeout: 8000 });
       await page.waitForTimeout(600);
     });
   });

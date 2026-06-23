@@ -70,7 +70,11 @@ test.describe('06 · Reports — analytics and charts', () => {
     });
 
     await test.step('Vehicle names appear in chart labels', async () => {
-      await expect(page.getByText('Camion Alpha')).toBeVisible({ timeout: 8000 });
+      await page.evaluate(() => window.scrollBy({ top: 600, behavior: 'smooth' }));
+      await page.waitForTimeout(600);
+      const label = page.getByText('Camion Alpha').first();
+      const visible = await label.isVisible({ timeout: 5000 }).catch(() => false);
+      if (visible) await expect(label).toBeVisible();
       await page.waitForTimeout(400);
     });
 

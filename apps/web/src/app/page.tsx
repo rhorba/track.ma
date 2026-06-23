@@ -253,19 +253,29 @@ const plans = [
     href: '/register?plan=pro',
     highlight: false,
   },
+  {
+    name: 'Flotte+',
+    price: '1 999 MAD',
+    period: '/ mois',
+    vehicles: 'Véhicules illimités',
+    features: ['Tout Entreprise +', 'Intégration ERP/WMS', 'Tableau de bord personnalisé', 'Formation sur site', 'Gestionnaire de compte dédié', 'SLA 99,99%'],
+    cta: 'Contacter les ventes',
+    href: '/register?plan=enterprise',
+    highlight: false,
+  },
 ];
 
 function Pricing() {
   return (
     <section id="tarifs" className="py-24 px-6 bg-slate-900/50">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Des tarifs transparents en MAD
           </h2>
           <p className="text-slate-400 text-lg">Sans frais cachés. Sans engagement annuel forcé.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
           {plans.map((p) => (
             <div
               key={p.name}

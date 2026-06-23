@@ -13,7 +13,8 @@ test.describe('00 · Landing page', () => {
     });
 
     await test.step('See logo and nav bar', async () => {
-      await expect(page.getByText('track.ma')).toBeVisible();
+      const header = page.getByRole('banner');
+      await expect(header.getByText('track.ma', { exact: true })).toBeVisible();
       await expect(page.getByRole('link', { name: /Fonctionnalités/i })).toBeVisible();
       await expect(page.getByRole('link', { name: /Tarifs/i })).toBeVisible();
     });
@@ -73,7 +74,7 @@ test.describe('00 · Landing page', () => {
     await page.waitForLoadState('networkidle');
 
     await test.step('Login link visible in nav', async () => {
-      const loginLink = page.getByRole('link', { name: /Connexion/i });
+      const loginLink = page.getByRole('banner').getByRole('link', { name: 'Connexion' });
       await expect(loginLink).toBeVisible();
       await loginLink.hover();
       await page.waitForTimeout(300);

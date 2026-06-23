@@ -26,14 +26,7 @@ export default defineConfig({
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   ],
-  webServer: {
-    command: 'pnpm dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
-    env: {
-      NEXT_TELEMETRY_DISABLED: '1',
-      NEXT_PUBLIC_API_URL: 'http://localhost:3001',
-      NEXT_PUBLIC_WS_URL: 'ws://localhost:3001',
-    },
-  },
+  // No webServer block — assumes `pnpm dev` is already running on port 3000.
+  // Start it first: cd apps/web && pnpm dev
 });
+

@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 // Hosts that are NOT org subdomains
 const ROOT_HOSTS = new Set(['trackma.ma', 'www.trackma.ma', 'localhost', '127.0.0.1']);
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const host = req.headers.get('host') ?? '';
   // Strip port for local dev (localhost:3000 → localhost)
   const hostname = host.split(':')[0];

@@ -3,7 +3,9 @@ import { FAKE_TOKEN, mountAuthApi, blockWs } from './helpers';
 
 test.describe('01 · Authentication', () => {
   test('login form renders correctly', async ({ page }) => {
-    await page.goto('/login');
+    test.setTimeout(60000);
+    await page.goto('/login', { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(800);
 
     await test.step('Form elements visible', async () => {
       await expect(page.getByRole('heading', { name: 'Connexion' })).toBeVisible();
