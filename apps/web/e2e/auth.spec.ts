@@ -22,10 +22,10 @@ test.describe('Login page', () => {
   });
 
   test('renders the sign-in form', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
-    await expect(page.getByLabel('Email')).toBeVisible();
-    await expect(page.getByLabel('Password')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Sign in' })).toBeEnabled();
+    await expect(page.getByRole('heading', { name: 'Connexion' })).toBeVisible();
+    await expect(page.locator('input[type="email"]')).toBeVisible();
+    await expect(page.locator('input[type="password"]')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Se connecter' })).toBeEnabled();
   });
 
   test('shows error on invalid credentials', async ({ page }) => {
@@ -33,11 +33,11 @@ test.describe('Login page', () => {
       route.fulfill({ status: 401, json: { message: 'Unauthorized' } }),
     );
 
-    await page.getByLabel('Email').fill('bad@example.com');
-    await page.getByLabel('Password').fill('wrongpassword');
-    await page.getByRole('button', { name: 'Sign in' }).click();
+    await page.locator('input[type="email"]').fill('bad@example.com');
+    await page.locator('input[type="password"]').fill('wrongpassword');
+    await page.getByRole('button', { name: 'Se connecter' }).click();
 
-    await expect(page.getByText('Invalid email or password.')).toBeVisible();
+    await expect(page.getByText('Email ou mot de passe incorrect.')).toBeVisible();
     await expect(page).toHaveURL(/\/login/);
   });
 
@@ -47,11 +47,11 @@ test.describe('Login page', () => {
       await route.fulfill({ status: 401, json: {} });
     });
 
-    await page.getByLabel('Email').fill('test@trackma.com');
-    await page.getByLabel('Password').fill('password123');
-    await page.getByRole('button', { name: 'Sign in' }).click();
+    await page.locator('input[type="email"]').fill('test@trackma.com');
+    await page.locator('input[type="password"]').fill('password123');
+    await page.getByRole('button', { name: 'Se connecter' }).click();
 
-    await expect(page.getByRole('button', { name: 'Signing in…' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Connexion…' })).toBeVisible();
   });
 
   test('redirects to dashboard on successful login', async ({ page }) => {
@@ -63,9 +63,9 @@ test.describe('Login page', () => {
     );
     await page.route('**/*.wasm', (route) => route.abort());
 
-    await page.getByLabel('Email').fill('test@trackma.com');
-    await page.getByLabel('Password').fill('password123');
-    await page.getByRole('button', { name: 'Sign in' }).click();
+    await page.locator('input[type="email"]').fill('test@trackma.com');
+    await page.locator('input[type="password"]').fill('password123');
+    await page.getByRole('button', { name: 'Se connecter' }).click();
 
     await page.waitForURL('**/dashboard', { timeout: 10000 });
     await expect(page).toHaveURL(/\/dashboard/);
