@@ -1,4 +1,20 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'track.ma — Suivi GPS de flotte en temps réel au Maroc',
+  description:
+    'track.ma est la solution de gestion de flotte GPS pour les entreprises marocaines. Suivi en temps réel, alertes, rapports, géofencing. Essai gratuit 14 jours.',
+  alternates: {
+    canonical: 'https://trackma.ma',
+  },
+  openGraph: {
+    title: 'track.ma — Suivi GPS de flotte en temps réel au Maroc',
+    description:
+      'Gérez votre flotte avec track.ma : positions en temps réel, alertes vitesse/zone, rapports de trajets. Plans à partir de 299 MAD/mois.',
+    url: 'https://trackma.ma',
+  },
+};
 
 export default function LandingPage() {
   return (
