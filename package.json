@@ -10,7 +10,9 @@
     "lint": "pnpm -r lint",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "docker:build": "docker compose build"
+    "docker:build": "docker compose build",
+    "test:video": "pnpm --filter web test:video",
+    "record": "pnpm --filter web test:video && node scripts/merge-recordings.mjs"
   },
   "devDependencies": {
     "typescript": "^5.4.5"

@@ -39,5 +39,9 @@ coverage/
 postgres_data/
 redis_data/
 
-# Recordings
-.recordings/
+# Recordings — raw and final videos are not committed (too large)
+.recordings/raw/
+.recordings/final/
+.recordings/report/
+# keep the directory itself
+!.recordings/.gitkeep
