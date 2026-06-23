@@ -97,11 +97,25 @@ test.describe('10 · Demo mode — live Casablanca map', () => {
       await page.goto('/offline');
       await page.waitForLoadState('networkidle');
       await page.waitForTimeout(600);
+      // Dismiss the Next.js dev error overlay (script-tag warning from next-themes)
+      await page.evaluate(() => {
+        document.querySelectorAll('nextjs-portal').forEach((el) => el.remove());
+        const s = document.createElement('style');
+        s.textContent = '[data-nextjs-dialog],[data-nextjs-toast],[class*="nextjs-container"],[class*="nextjs-error"]{display:none!important}';
+        document.head.appendChild(s);
+      });
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(400);
     });
 
     await test.step('Offline page content visible', async () => {
-      await expect(page.locator('body')).toBeVisible();
-      // Should show the bilingual offline message
+      await expect(page.getByText('Vous êtes hors ligne')).toBeVisible({ timeout: 8000 });
+      await expect(page.getByRole('button', { name: 'Réessayer' })).toBeVisible();
+      await page.waitForTimeout(800);
+    });
+
+    await test.step('Retry button hover', async () => {
+      await page.getByRole('button', { name: 'Réessayer' }).hover();
       await page.waitForTimeout(500);
     });
   });
