@@ -6,12 +6,14 @@ import { useTheme } from 'next-themes';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth';
 import { useLocale } from '@/lib/i18n';
+import { useBranding } from '@/lib/branding';
 
 export default function Sidebar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const { user } = useAuth();
   const { locale, setLocale, t } = useLocale();
+  const { branding } = useBranding();
   const [mounted, setMounted] = useState(false);
 
   // useLayoutEffect-free mount detection via useState initializer
@@ -25,16 +27,30 @@ export default function Sidebar() {
     { href: '/reports', label: t('nav_reports'), icon: '▤', adminOnly: false },
     { href: '/billing', label: t('nav_billing'), icon: '◷', adminOnly: false },
     { href: '/admin', label: t('nav_admin'), icon: '⚙', adminOnly: true },
+    { href: '/settings/branding', label: t('nav_branding'), icon: '🎨', adminOnly: true },
   ];
 
   return (
     <aside className="flex flex-col w-64 min-h-screen bg-slate-900 dark:bg-slate-950 border-e border-slate-700 dark:border-slate-800 text-white shrink-0">
       {/* Logo */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-700 dark:border-slate-800">
-        <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
-          T
-        </div>
-        <span className="text-lg font-semibold tracking-tight text-white">track.ma</span>
+        {branding?.logoUrl ? (
+          <img
+            src={branding.logoUrl}
+            alt={branding.name}
+            className="w-8 h-8 rounded-lg object-contain bg-white"
+          />
+        ) : (
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm"
+            style={{ backgroundColor: branding?.primaryColor ?? '#2563eb' }}
+          >
+            {branding?.name?.[0]?.toUpperCase() ?? 'T'}
+          </div>
+        )}
+        <span className="text-lg font-semibold tracking-tight text-white">
+          {branding?.name ?? 'track.ma'}
+        </span>
       </div>
 
       {/* Nav */}
@@ -47,9 +63,10 @@ export default function Sidebar() {
               href={href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 active
-                  ? 'bg-blue-600 text-white'
+                  ? 'text-white'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800 dark:hover:bg-slate-800/60'
               }`}
+              style={active ? { backgroundColor: branding?.primaryColor ?? '#2563eb' } : undefined}
             >
               <span className="text-base">{icon}</span>
               {label}

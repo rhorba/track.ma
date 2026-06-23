@@ -60,6 +60,11 @@ export const acceptInvite = (token: string, name: string, password: string) =>
 
 // Organizations
 export const getUsage = () => api.get('/organizations/me/usage').then((r) => r.data);
+export const getMyOrg = () => api.get('/organizations/me').then((r) => r.data);
+export const updateBranding = (data: { logoUrl?: string; primaryColor?: string }) =>
+  api.patch('/organizations/me/branding', data).then((r) => r.data);
+export const getPublicBranding = (slug: string) =>
+  api.get(`/organizations/public?slug=${encodeURIComponent(slug)}`).then((r) => r.data);
 
 // Billing
 export const createCheckout = (priceId: string, returnUrl: string) =>

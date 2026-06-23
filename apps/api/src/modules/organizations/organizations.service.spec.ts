@@ -30,6 +30,58 @@ const sampleOrg: Partial<Organization> = {
   vehicleLimit: 5,
 };
 
+describe('OrganizationsService.updateBranding', () => {
+  let service: OrganizationsService;
+  let orgRepo: ReturnType<typeof makeOrgRepo>;
+
+  beforeEach(async () => {
+    orgRepo = makeOrgRepo();
+    const module = await Test.createTestingModule({
+      providers: [
+        OrganizationsService,
+        { provide: getRepositoryToken(Organization), useValue: orgRepo },
+        { provide: getRepositoryToken(User), useValue: makeUserRepo() },
+      ],
+    }).compile();
+    service = module.get(OrganizationsService);
+  });
+
+  it('saves logoUrl and primaryColor then returns branding fields', async () => {
+    orgRepo.findOneOrFail.mockResolvedValue({
+      ...sampleOrg,
+      logoUrl: 'https://example.com/logo.png',
+      primaryColor: '#ff0000',
+    });
+    const result = await service.updateBranding('org-1', {
+      logoUrl: 'https://example.com/logo.png',
+      primaryColor: '#ff0000',
+    });
+    expect(orgRepo.update).toHaveBeenCalledWith('org-1', {
+      logoUrl: 'https://example.com/logo.png',
+      primaryColor: '#ff0000',
+    });
+    expect(result.logoUrl).toBe('https://example.com/logo.png');
+    expect(result.primaryColor).toBe('#ff0000');
+    expect(result.slug).toBe('acme');
+  });
+
+  it('findBySlugPublic returns null for unknown slug', async () => {
+    orgRepo.findOne.mockResolvedValue(null);
+    const result = await service.findBySlugPublic('unknown');
+    expect(result).toBeNull();
+  });
+
+  it('findBySlugPublic returns branding fields for known slug', async () => {
+    orgRepo.findOne.mockResolvedValue({
+      ...sampleOrg,
+      logoUrl: null,
+      primaryColor: '#2563eb',
+    });
+    const result = await service.findBySlugPublic('acme');
+    expect(result).toMatchObject({ slug: 'acme', primaryColor: '#2563eb' });
+  });
+});
+
 describe('OrganizationsService.getUsage', () => {
   let service: OrganizationsService;
   let orgRepo: ReturnType<typeof makeOrgRepo>;

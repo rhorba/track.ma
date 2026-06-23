@@ -50,6 +50,12 @@ export class Organization {
   @Column({ default: 2 })
   vehicleLimit: number;
 
+  @Column({ nullable: true })
+  logoUrl: string;
+
+  @Column({ nullable: true, default: '#2563eb' })
+  primaryColor: string;
+
   @OneToMany(() => User, (user) => user.organization)
   users: User[];
 

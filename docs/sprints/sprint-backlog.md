@@ -572,3 +572,71 @@ Acceptance Criteria:
 **Points**: 3 | **Specialist**: DBA
 
 **Sprint 6 Total**: 37 pts
+
+---
+
+## Sprint 7 — PWA, i18n & Multi-tenant Branding
+
+**Goal**: Arabic RTL, offline PWA, analytics dashboard, per-org custom branding with slug routing.
+**Dates**: 2026-06-23 → 2026-07-06
+**Status**: In progress
+
+### Stories
+
+**Story 7.1** — Arabic RTL i18n ✅ DONE
+```
+Acceptance Criteria (all met):
+- [x] Full fr/ar locale context with LocaleEffect setting html[lang+dir]
+- [x] CSS logical properties (padding-inline, margin-inline) throughout all pages
+- [x] Sidebar language switcher (FR ↔ AR) with instant RTL layout flip
+- [x] All dashboard, vehicles, alerts, reports, login pages fully translated
+```
+**Points**: 8 | **Specialist**: Frontend Dev | **Commit**: 46e7eca
+
+---
+
+**Story 7.2** — Progressive Web App ✅ DONE
+```
+Acceptance Criteria (all met):
+- [x] Web App Manifest (/public/manifest.json) with icons and theme color
+- [x] Service Worker (/public/sw.js): network-first navigation, cache-first static assets, /api/ bypass
+- [x] Offline fallback page (/offline) shown when navigation fails offline
+- [x] SwRegistration component auto-registers SW on app load
+```
+**Points**: 5 | **Specialist**: Frontend Dev | **Commit**: 46e7eca
+
+---
+
+**Story 7.3** — Analytics Dashboard ✅ DONE
+```
+Acceptance Criteria (all met):
+- [x] Date range picker: 7d / 30d / 90d selector on /reports
+- [x] Per-vehicle SVG bar charts: distance, max speed, fuel consumed
+- [x] GET /reports/by-vehicle API endpoint with date range filtering
+- [x] All trip table columns i18n-translated (fr/ar)
+```
+**Points**: 8 | **Specialist**: Backend Dev + Frontend Dev | **Commit**: 46e7eca
+
+---
+
+**Story 7.4** — Multi-tenant Branding ✅ DONE
+```
+As a fleet company owner,
+I want to customize the dashboard with my company logo and colors,
+So that it feels like my own branded product.
+
+Acceptance Criteria:
+- [x] Organization entity has logoUrl and primaryColor fields (nullable)
+- [x] PATCH /organizations/me/branding updates logoUrl and primaryColor (auth required)
+- [x] GET /organizations/public?slug=xxx returns branding for subdomain resolution (public)
+- [x] Frontend BrandingContext fetches org branding and injects --color-primary CSS var
+- [x] Sidebar renders org logo (if set) or fallback initial + brand color
+- [x] Active nav link uses org primaryColor instead of hardcoded blue
+- [x] /settings/branding page: logo URL input + color picker + live preview + save
+- [x] Next.js middleware extracts subdomain slug → x-org-slug request header
+- [x] TypeORM migration adds logo_url and primary_color columns (IF NOT EXISTS)
+- [x] 13 unit tests covering service.updateBranding, findBySlugPublic, controller endpoints
+```
+**Points**: 8 | **Specialist**: Backend Dev + Frontend Dev
+
+**Sprint 7 Total**: 29 pts (stories 7.1–7.4)

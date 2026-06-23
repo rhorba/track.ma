@@ -27,6 +27,18 @@ export class OrganizationsService {
     return this.findById(id);
   }
 
+  async updateBranding(orgId: string, data: { logoUrl?: string; primaryColor?: string }) {
+    await this.repo.update(orgId, data);
+    const org = await this.repo.findOneOrFail({ where: { id: orgId } });
+    return { logoUrl: org.logoUrl, primaryColor: org.primaryColor, slug: org.slug };
+  }
+
+  async findBySlugPublic(slug: string) {
+    const org = await this.repo.findOne({ where: { slug } });
+    if (!org) return null;
+    return { name: org.name, logoUrl: org.logoUrl, primaryColor: org.primaryColor, slug: org.slug };
+  }
+
   async getUsage(orgId: string) {
     const org = await this.repo.findOneOrFail({ where: { id: orgId } });
     const [vehicleCount, userCount] = await Promise.all([
