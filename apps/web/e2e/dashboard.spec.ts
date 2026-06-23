@@ -55,9 +55,9 @@ test.describe('Dashboard', () => {
 
   test('shows fleet status badges', async ({ page }) => {
     await page.goto('/dashboard');
-    await expect(page.getByText(/Active/)).toBeVisible({ timeout: 10000 });
-    await expect(page.getByText(/Idle/)).toBeVisible();
-    await expect(page.getByText(/Offline/)).toBeVisible();
+    await expect(page.getByText(/En marche/)).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText(/arrêt/)).toBeVisible();
+    await expect(page.getByText(/Hors ligne/)).toBeVisible();
   });
 
   test('sidebar navigation is visible', async ({ page }) => {

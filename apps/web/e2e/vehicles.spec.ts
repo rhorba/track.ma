@@ -69,16 +69,16 @@ test.describe('Vehicles page', () => {
 
   test('opens Add vehicle modal on button click', async ({ page }) => {
     await page.goto('/vehicles');
-    await page.getByRole('button', { name: /add vehicle/i }).click();
-    await expect(page.locator('h2', { hasText: 'Add vehicle' })).toBeVisible();
-    await expect(page.getByPlaceholder('e.g. Truck #1')).toBeVisible();
+    await page.getByRole('button', { name: /Ajouter un véhicule/i }).click();
+    await expect(page.locator('h2', { hasText: 'Ajouter un véhicule' })).toBeVisible();
+    await expect(page.getByPlaceholder('ex. Camion #1')).toBeVisible();
   });
 
   test('closes modal when Cancel is clicked', async ({ page }) => {
     await page.goto('/vehicles');
-    await page.getByRole('button', { name: /add vehicle/i }).click();
-    await page.getByRole('button', { name: 'Cancel' }).click();
-    await expect(page.locator('h2', { hasText: 'Add vehicle' })).not.toBeVisible();
+    await page.getByRole('button', { name: /Ajouter un véhicule/i }).click();
+    await page.getByRole('button', { name: 'Annuler' }).click();
+    await expect(page.locator('h2', { hasText: 'Ajouter un véhicule' })).not.toBeVisible();
   });
 
   test('submits new vehicle via POST /api/vehicles', async ({ page }) => {
@@ -92,28 +92,28 @@ test.describe('Vehicles page', () => {
     });
 
     await page.goto('/vehicles');
-    await page.getByRole('button', { name: /add vehicle/i }).click();
+    await page.getByRole('button', { name: /Ajouter un véhicule/i }).click();
 
-    await page.getByPlaceholder('e.g. Truck #1').fill('New Truck');
-    await page.getByPlaceholder('e.g. 12345-A-7').fill('99999-C-3');
-    await page.getByPlaceholder('15-digit IMEI').fill('333333333333333');
-    await page.getByPlaceholder('e.g. Mercedes').fill('Ford');
-    await page.getByPlaceholder('e.g. Sprinter').fill('Transit');
+    await page.getByPlaceholder('ex. Camion #1').fill('New Truck');
+    await page.getByPlaceholder('ex. 12345-A-7').fill('99999-C-3');
+    await page.getByPlaceholder('IMEI à 15 chiffres').fill('333333333333333');
+    await page.getByPlaceholder('ex. Mercedes').fill('Ford');
+    await page.getByPlaceholder('ex. Sprinter').fill('Transit');
     await page.getByPlaceholder('2024').fill('2023');
 
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Enregistrer' }).click();
 
     await expect.poll(() => posted, { timeout: 5000 }).toBe(true);
   });
 
-  test('shows Edit and Delete buttons for each vehicle', async ({ page }) => {
+  test('shows Modifier and Supprimer buttons for each vehicle', async ({ page }) => {
     await page.goto('/vehicles');
     await expect(page.getByText('Truck Alpha')).toBeVisible({ timeout: 10000 });
 
-    const editButtons = page.getByRole('button', { name: 'Edit' });
+    const editButtons = page.getByRole('button', { name: 'Modifier' });
     await expect(editButtons).toHaveCount(MOCK_VEHICLES.length);
 
-    const deleteButtons = page.getByRole('button', { name: 'Delete' });
+    const deleteButtons = page.getByRole('button', { name: 'Supprimer' });
     await expect(deleteButtons).toHaveCount(MOCK_VEHICLES.length);
   });
 });
