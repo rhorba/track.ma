@@ -82,6 +82,31 @@ describe('MqttIngestionService', () => {
     return messageHandler?.(topic, payload);
   };
 
+  // ── Lifecycle ──────────────────────────────────────────────────────────────
+
+  it('subscribes to device topics on MQTT connect', () => {
+    const connectHandler = mockMqttClient.on.mock.calls.find(
+      ([e]) => e === 'connect',
+    )?.[1] as (() => void) | undefined;
+    connectHandler?.();
+    expect(mockMqttClient.subscribe).toHaveBeenCalledWith(
+      'trackma/devices/+/position',
+      { qos: 1 },
+    );
+    expect(mockMqttClient.subscribe).toHaveBeenCalledWith(
+      'trackma/teltonika/+',
+      { qos: 1 },
+    );
+  });
+
+  it('drops position with invalid lng (out of range)', async () => {
+    await dispatchMessage(
+      'trackma/devices/imei1/position',
+      validPayload({ lng: 200 }),
+    );
+    expect(redis.publish).not.toHaveBeenCalled();
+  });
+
   // ── Position topic ─────────────────────────────────────────────────────────
 
   it('publishes a valid position from /position topic', async () => {
