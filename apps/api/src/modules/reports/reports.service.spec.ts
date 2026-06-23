@@ -4,15 +4,18 @@ import { ReportsService } from './reports.service';
 import { Trip } from '../../entities/trip.entity';
 import { Alert } from '../../entities/alert.entity';
 
-const makeQb = (rawOne: any, many: any[] = []) => ({
+const makeQb = (rawOne: any, many: any[] = [], rawMany: any[] = []) => ({
   innerJoin: jest.fn().mockReturnThis(),
   innerJoinAndSelect: jest.fn().mockReturnThis(),
   where: jest.fn().mockReturnThis(),
   andWhere: jest.fn().mockReturnThis(),
   select: jest.fn().mockReturnThis(),
+  groupBy: jest.fn().mockReturnThis(),
+  addGroupBy: jest.fn().mockReturnThis(),
   orderBy: jest.fn().mockReturnThis(),
   take: jest.fn().mockReturnThis(),
   getRawOne: jest.fn().mockResolvedValue(rawOne),
+  getRawMany: jest.fn().mockResolvedValue(rawMany),
   getMany: jest.fn().mockResolvedValue(many),
 });
 
@@ -63,6 +66,34 @@ describe('ReportsService', () => {
       mockTripsRepo.createQueryBuilder.mockReturnValue(makeQb(empty));
       const result = await service.getFleetSummary(ORG_ID, FROM, TO);
       expect(result.totalTrips).toBe('0');
+    });
+  });
+
+  describe('getByVehicle', () => {
+    it('returns per-vehicle aggregated stats', async () => {
+      const rows = [
+        {
+          vehicleId: 'v-1',
+          vehicleName: 'Truck 1',
+          totalKm: '500',
+          totalFuel: '40',
+          avgSpeed: '70',
+          tripCount: '5',
+        },
+      ];
+      const qb = makeQb(null, [], rows);
+      mockTripsRepo.createQueryBuilder.mockReturnValue(qb);
+      const result = await service.getByVehicle(ORG_ID, FROM, TO);
+      expect(result).toEqual(rows);
+      expect(qb.groupBy).toHaveBeenCalledWith('v.id');
+      expect(qb.addGroupBy).toHaveBeenCalledWith('v.name');
+    });
+
+    it('returns empty array when no trips exist', async () => {
+      const qb = makeQb(null, [], []);
+      mockTripsRepo.createQueryBuilder.mockReturnValue(qb);
+      const result = await service.getByVehicle(ORG_ID, FROM, TO);
+      expect(result).toHaveLength(0);
     });
   });
 

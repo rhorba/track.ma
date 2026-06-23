@@ -7,6 +7,9 @@ const mockService = {
     .fn()
     .mockResolvedValue({ totalKm: '500', totalTrips: '10' }),
   getTrips: jest.fn().mockResolvedValue([{ id: 't-1' }]),
+  getByVehicle: jest
+    .fn()
+    .mockResolvedValue([{ vehicleId: 'v-1', vehicleName: 'Truck 1', totalKm: '500' }]),
 };
 
 const REQ = { user: { organizationId: 'org-1' } };
@@ -56,6 +59,23 @@ describe('ReportsController', () => {
       expect.any(Date),
     );
     expect(result).toHaveLength(1);
+  });
+
+  it('byVehicle delegates to service with parsed dates', async () => {
+    const result = await controller.byVehicle(REQ, '2026-01-01', '2026-01-31');
+    expect(mockService.getByVehicle).toHaveBeenCalledWith(
+      'org-1',
+      expect.any(Date),
+      expect.any(Date),
+    );
+    expect(result).toHaveLength(1);
+  });
+
+  it('byVehicle uses default dates when not provided', async () => {
+    await controller.byVehicle(REQ, '', '');
+    const [, from, to] = mockService.getByVehicle.mock.calls[0];
+    expect(from).toBeInstanceOf(Date);
+    expect(to).toBeInstanceOf(Date);
   });
 
   it('trips passes undefined vehicleId when not provided', async () => {

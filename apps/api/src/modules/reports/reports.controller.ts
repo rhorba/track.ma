@@ -20,6 +20,19 @@ export class ReportsController {
     );
   }
 
+  @Get('by-vehicle')
+  byVehicle(
+    @Request() req: any,
+    @Query('from') from: string,
+    @Query('to') to: string,
+  ) {
+    return this.service.getByVehicle(
+      req.user.organizationId,
+      new Date(from || Date.now() - 30 * 86400000),
+      new Date(to || Date.now()),
+    );
+  }
+
   @Get('trips')
   trips(
     @Request() req: any,

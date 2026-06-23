@@ -46,6 +46,8 @@ export const getFleetSummary = (from?: string, to?: string) =>
   api.get('/reports/summary', { params: { from, to } }).then((r) => r.data);
 export const getTripReport = (vehicleId?: string, from?: string, to?: string) =>
   api.get('/reports/trips', { params: { vehicleId, from, to } }).then((r) => r.data);
+export const getVehicleStats = (from?: string, to?: string) =>
+  api.get('/reports/by-vehicle', { params: { from, to } }).then((r) => r.data);
 
 // Users & Invites
 export const getTeam = () => api.get('/users/team').then((r) => r.data);

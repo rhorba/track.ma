@@ -6,23 +6,25 @@ import { useAuth } from '@/lib/auth';
 import useSWR from 'swr';
 import { getFleetPositions, getGeofences } from '@/lib/api';
 import AlertBell from '@/components/AlertBell';
+import { useLocale } from '@/lib/i18n';
 
 const Map = dynamic(() => import('@/components/Map'), { ssr: false });
 
 function StatusBadge({ active, idle, offline }: { active: number; idle: number; offline: number }) {
+  const { t } = useLocale();
   return (
     <div className="flex items-center gap-4 text-sm">
       <span className="flex items-center gap-1.5">
         <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
-        <span className="text-slate-600 dark:text-slate-400">{active} En marche</span>
+        <span className="text-slate-600 dark:text-slate-400">{active} {t('status_active')}</span>
       </span>
       <span className="flex items-center gap-1.5">
         <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
-        <span className="text-slate-600 dark:text-slate-400">{idle} À l&apos;arrêt</span>
+        <span className="text-slate-600 dark:text-slate-400">{idle} {t('status_idle')}</span>
       </span>
       <span className="flex items-center gap-1.5">
         <span className="w-2 h-2 rounded-full bg-slate-400 inline-block" />
-        <span className="text-slate-600 dark:text-slate-400">{offline} Hors ligne</span>
+        <span className="text-slate-600 dark:text-slate-400">{offline} {t('status_offline')}</span>
       </span>
     </div>
   );
@@ -30,6 +32,7 @@ function StatusBadge({ active, idle, offline }: { active: number; idle: number; 
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { t } = useLocale();
   const livePositions = useFleetSocket(user?.organizationId ?? null);
 
   const { data: initial } = useSWR('fleet-positions', getFleetPositions, {
@@ -37,7 +40,6 @@ export default function DashboardPage() {
   });
   const { data: geofences } = useSWR('geofences', getGeofences, { revalidateOnFocus: false });
 
-  // Merge REST snapshot with live WS updates
   const seedPositions: Record<string, any> = {};
   if (initial) {
     for (const item of initial) {
@@ -56,9 +58,9 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shrink-0">
         <div>
-          <h1 className="text-lg font-semibold text-slate-900 dark:text-white">Carte en direct</h1>
+          <h1 className="text-lg font-semibold text-slate-900 dark:text-white">{t('dashboard_title')}</h1>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Positions des véhicules en temps réel
+            {t('dashboard_subtitle')}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -67,13 +69,13 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Map — fills remaining height */}
+      {/* Map */}
       <div className="flex-1 relative">
         <Map positions={positions} geofences={geofences ?? []} />
 
         {/* Vehicle count chip */}
-        <div className="absolute bottom-4 right-4 z-[1000] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 shadow-lg text-sm font-medium text-slate-700 dark:text-slate-300">
-          {values.length} véhicule{values.length !== 1 ? 's' : ''} suivi{values.length !== 1 ? 's' : ''}
+        <div className="absolute bottom-4 end-4 z-[1000] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 shadow-lg text-sm font-medium text-slate-700 dark:text-slate-300">
+          {values.length} {values.length !== 1 ? t('vehicles_tracked_many') : t('vehicles_tracked_one')}
         </div>
       </div>
     </div>

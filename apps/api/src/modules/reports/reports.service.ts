@@ -29,6 +29,28 @@ export class ReportsService {
     return result;
   }
 
+  async getByVehicle(organizationId: string, from: Date, to: Date) {
+    return this.tripsRepo
+      .createQueryBuilder('t')
+      .innerJoin('t.vehicle', 'v', 'v.organizationId = :organizationId', {
+        organizationId,
+      })
+      .where('t.startedAt BETWEEN :from AND :to', { from, to })
+      .andWhere('t.isComplete = true')
+      .select([
+        'v.id AS "vehicleId"',
+        'v.name AS "vehicleName"',
+        'COALESCE(SUM(t.distanceKm), 0) AS "totalKm"',
+        'COALESCE(SUM(t.fuelConsumedL), 0) AS "totalFuel"',
+        'COALESCE(AVG(t.avgSpeedKmh), 0) AS "avgSpeed"',
+        'COUNT(t.id) AS "tripCount"',
+      ])
+      .groupBy('v.id')
+      .addGroupBy('v.name')
+      .orderBy('"totalKm"', 'DESC')
+      .getRawMany();
+  }
+
   getTrips(
     organizationId: string,
     vehicleId: string | undefined,

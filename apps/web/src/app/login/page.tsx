@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login } from '@/lib/api';
 import { saveToken } from '@/lib/auth';
+import { useLocale } from '@/lib/i18n';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useLocale();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -21,7 +23,7 @@ export default function LoginPage() {
       saveToken(accessToken);
       router.push('/dashboard');
     } catch {
-      setError('Email ou mot de passe incorrect.');
+      setError(t('login_error'));
     } finally {
       setLoading(false);
     }
@@ -39,13 +41,13 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 p-8">
-          <h1 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">Connexion</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Entrez vos identifiants pour accéder à votre flotte</p>
+          <h1 className="text-xl font-semibold text-slate-900 dark:text-white mb-1">{t('login_title')}</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">{t('login_subtitle')}</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Adresse email
+                {t('login_email')}
               </label>
               <input
                 type="email"
@@ -59,7 +61,7 @@ export default function LoginPage() {
 
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
-                Mot de passe
+                {t('login_password')}
               </label>
               <input
                 type="password"
@@ -82,7 +84,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors"
             >
-              {loading ? 'Connexion…' : 'Se connecter'}
+              {loading ? t('login_loading') : t('login_submit')}
             </button>
           </form>
         </div>
