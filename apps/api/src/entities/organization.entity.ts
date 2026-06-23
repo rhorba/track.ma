@@ -1,9 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { User } from './user.entity';
 import { Vehicle } from './vehicle.entity';
 
 export type SubscriptionTier = 'starter' | 'pro' | 'business' | 'trial';
-export type SubscriptionStatus = 'active' | 'cancelled' | 'past_due' | 'trialing';
+export type SubscriptionStatus =
+  | 'active'
+  | 'cancelled'
+  | 'past_due'
+  | 'trialing';
 
 @Entity('organizations')
 export class Organization {
@@ -16,10 +27,18 @@ export class Organization {
   @Column({ unique: true })
   slug: string;
 
-  @Column({ type: 'enum', enum: ['starter', 'pro', 'business', 'trial'], default: 'trial' })
+  @Column({
+    type: 'enum',
+    enum: ['starter', 'pro', 'business', 'trial'],
+    default: 'trial',
+  })
   tier: SubscriptionTier;
 
-  @Column({ type: 'enum', enum: ['active', 'cancelled', 'past_due', 'trialing'], default: 'trialing' })
+  @Column({
+    type: 'enum',
+    enum: ['active', 'cancelled', 'past_due', 'trialing'],
+    default: 'trialing',
+  })
   subscriptionStatus: SubscriptionStatus;
 
   @Column({ nullable: true })

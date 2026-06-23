@@ -37,18 +37,28 @@ describe('GeofencesService', () => {
     repo.find.mockResolvedValue([{ id: 'gf-1', name: 'Zone A' }]);
     const result = await service.list('org-1');
     expect(result).toHaveLength(1);
-    expect(repo.find).toHaveBeenCalledWith({ where: { organizationId: 'org-1', isActive: true } });
+    expect(repo.find).toHaveBeenCalledWith({
+      where: { organizationId: 'org-1', isActive: true },
+    });
   });
 
   it('creates a geofence with valid polygon', async () => {
-    const result = await service.create({ name: 'Test', polygon: validPolygon, organizationId: 'org-1' });
+    const result = await service.create({
+      name: 'Test',
+      polygon: validPolygon,
+      organizationId: 'org-1',
+    });
     expect(result.name).toBe('Test');
     expect(repo.save).toHaveBeenCalled();
   });
 
   it('throws BadRequestException for polygon with fewer than 3 points', () => {
     expect(() =>
-      service.create({ name: 'Bad', polygon: [{ lat: 1, lng: 1 }], organizationId: 'org-1' }),
+      service.create({
+        name: 'Bad',
+        polygon: [{ lat: 1, lng: 1 }],
+        organizationId: 'org-1',
+      }),
     ).toThrow(BadRequestException);
     expect(repo.save).not.toHaveBeenCalled();
   });

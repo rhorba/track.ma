@@ -1,5 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { getRepositoryToken } from '@nestjs/typeorm';
@@ -53,8 +57,14 @@ describe('AuthService.acceptInvite', () => {
         { provide: getRepositoryToken(User), useValue: usersRepo },
         { provide: getRepositoryToken(Organization), useValue: orgsRepo },
         { provide: getRepositoryToken(UserInvite), useValue: invitesRepo },
-        { provide: JwtService, useValue: { sign: jest.fn().mockReturnValue('jwt-token') } },
-        { provide: ConfigService, useValue: { get: jest.fn().mockReturnValue('secret') } },
+        {
+          provide: JwtService,
+          useValue: { sign: jest.fn().mockReturnValue('jwt-token') },
+        },
+        {
+          provide: ConfigService,
+          useValue: { get: jest.fn().mockReturnValue('secret') },
+        },
       ],
     }).compile();
 
@@ -66,11 +76,19 @@ describe('AuthService.acceptInvite', () => {
     usersRepo.findOne.mockResolvedValue(null); // no existing user
     invitesRepo.update.mockResolvedValue({ affected: 1 });
 
-    const result = await service.acceptInvite('valid-token', 'New User', 'password123');
+    const result = await service.acceptInvite(
+      'valid-token',
+      'New User',
+      'password123',
+    );
 
     expect(result).toHaveProperty('accessToken');
     expect(usersRepo.create).toHaveBeenCalledWith(
-      expect.objectContaining({ email: 'invited@test.ma', organizationId: 'org-1', role: 'viewer' }),
+      expect.objectContaining({
+        email: 'invited@test.ma',
+        organizationId: 'org-1',
+        role: 'viewer',
+      }),
     );
     expect(invitesRepo.update).toHaveBeenCalledWith(
       { id: 'inv-1', isActive: true },
@@ -81,25 +99,34 @@ describe('AuthService.acceptInvite', () => {
   it('throws NotFoundException for a token that does not exist or is inactive', async () => {
     invitesRepo.findOne.mockResolvedValue(null);
 
-    await expect(service.acceptInvite('bad-token', 'Name', 'password123'))
-      .rejects.toThrow(NotFoundException);
+    await expect(
+      service.acceptInvite('bad-token', 'Name', 'password123'),
+    ).rejects.toThrow(NotFoundException);
     expect(usersRepo.save).not.toHaveBeenCalled();
   });
 
   it('throws BadRequestException for an expired token', async () => {
-    invitesRepo.findOne.mockResolvedValue({ ...validInvite, expiresAt: pastDate });
+    invitesRepo.findOne.mockResolvedValue({
+      ...validInvite,
+      expiresAt: pastDate,
+    });
 
-    await expect(service.acceptInvite('valid-token', 'Name', 'password123'))
-      .rejects.toThrow(BadRequestException);
+    await expect(
+      service.acceptInvite('valid-token', 'Name', 'password123'),
+    ).rejects.toThrow(BadRequestException);
     expect(usersRepo.save).not.toHaveBeenCalled();
   });
 
   it('throws ConflictException if a user with the invite email already exists', async () => {
     invitesRepo.findOne.mockResolvedValue(validInvite);
-    usersRepo.findOne.mockResolvedValue({ id: 'existing', email: 'invited@test.ma' });
+    usersRepo.findOne.mockResolvedValue({
+      id: 'existing',
+      email: 'invited@test.ma',
+    });
 
-    await expect(service.acceptInvite('valid-token', 'Name', 'password123'))
-      .rejects.toThrow(ConflictException);
+    await expect(
+      service.acceptInvite('valid-token', 'Name', 'password123'),
+    ).rejects.toThrow(ConflictException);
     expect(usersRepo.save).not.toHaveBeenCalled();
   });
 
@@ -108,8 +135,9 @@ describe('AuthService.acceptInvite', () => {
     usersRepo.findOne.mockResolvedValue(null);
     invitesRepo.update.mockResolvedValue({ affected: 0 }); // race: already accepted
 
-    await expect(service.acceptInvite('valid-token', 'Name', 'password123'))
-      .rejects.toThrow(BadRequestException);
+    await expect(
+      service.acceptInvite('valid-token', 'Name', 'password123'),
+    ).rejects.toThrow(BadRequestException);
     expect(usersRepo.save).not.toHaveBeenCalled();
   });
 

@@ -5,7 +5,12 @@ import { Repository } from 'typeorm';
 import Stripe from 'stripe';
 import { Organization } from '../../entities/organization.entity';
 
-const TIER_LIMITS: Record<string, number> = { starter: 5, pro: 25, business: 9999, trial: 2 };
+const TIER_LIMITS: Record<string, number> = {
+  starter: 5,
+  pro: 25,
+  business: 9999,
+  trial: 2,
+};
 
 @Injectable()
 export class BillingService {
@@ -15,15 +20,23 @@ export class BillingService {
     private config: ConfigService,
     @InjectRepository(Organization) private orgsRepo: Repository<Organization>,
   ) {
-    this.stripe = new Stripe(config.get('STRIPE_SECRET_KEY')!, { apiVersion: '2025-02-24.acacia' });
+    this.stripe = new Stripe(config.get('STRIPE_SECRET_KEY')!, {
+      apiVersion: '2025-02-24.acacia',
+    });
   }
 
-  async createCheckoutSession(orgId: string, priceId: string, returnUrl: string) {
+  async createCheckoutSession(
+    orgId: string,
+    priceId: string,
+    returnUrl: string,
+  ) {
     const org = await this.orgsRepo.findOneOrFail({ where: { id: orgId } });
 
     let customerId = org.stripeCustomerId;
     if (!customerId) {
-      const customer = await this.stripe.customers.create({ metadata: { orgId } });
+      const customer = await this.stripe.customers.create({
+        metadata: { orgId },
+      });
       customerId = customer.id;
       await this.orgsRepo.update(orgId, { stripeCustomerId: customerId });
     }
@@ -45,16 +58,22 @@ export class BillingService {
       this.config.get('STRIPE_WEBHOOK_SECRET')!,
     );
 
-    if (event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.created') {
-      const sub = event.data.object as Stripe.Subscription;
+    if (
+      event.type === 'customer.subscription.updated' ||
+      event.type === 'customer.subscription.created'
+    ) {
+      const sub = event.data.object;
       const priceId = sub.items.data[0].price.id;
       const tier = this.resolveTier(priceId);
-      await this.orgsRepo.update({ stripeCustomerId: sub.customer as string }, {
-        stripeSubscriptionId: sub.id,
-        tier,
-        subscriptionStatus: sub.status as any,
-        vehicleLimit: TIER_LIMITS[tier],
-      });
+      await this.orgsRepo.update(
+        { stripeCustomerId: sub.customer as string },
+        {
+          stripeSubscriptionId: sub.id,
+          tier,
+          subscriptionStatus: sub.status as any,
+          vehicleLimit: TIER_LIMITS[tier],
+        },
+      );
     }
   }
 

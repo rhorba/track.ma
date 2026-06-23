@@ -14,7 +14,9 @@ export class ReportsService {
   async getFleetSummary(organizationId: string, from: Date, to: Date) {
     const result = await this.tripsRepo
       .createQueryBuilder('t')
-      .innerJoin('t.vehicle', 'v', 'v.organizationId = :organizationId', { organizationId })
+      .innerJoin('t.vehicle', 'v', 'v.organizationId = :organizationId', {
+        organizationId,
+      })
       .where('t.startedAt BETWEEN :from AND :to', { from, to })
       .andWhere('t.isComplete = true')
       .select([
@@ -27,10 +29,20 @@ export class ReportsService {
     return result;
   }
 
-  getTrips(organizationId: string, vehicleId: string | undefined, from: Date, to: Date) {
+  getTrips(
+    organizationId: string,
+    vehicleId: string | undefined,
+    from: Date,
+    to: Date,
+  ) {
     const qb = this.tripsRepo
       .createQueryBuilder('t')
-      .innerJoinAndSelect('t.vehicle', 'v', 'v.organizationId = :organizationId', { organizationId })
+      .innerJoinAndSelect(
+        't.vehicle',
+        'v',
+        'v.organizationId = :organizationId',
+        { organizationId },
+      )
       .where('t.startedAt BETWEEN :from AND :to', { from, to })
       .andWhere('t.isComplete = true')
       .orderBy('t.startedAt', 'DESC')

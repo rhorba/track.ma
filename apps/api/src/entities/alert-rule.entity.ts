@@ -1,8 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  Index,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Organization } from './organization.entity';
 import { Vehicle } from './vehicle.entity';
 
-export type AlertRuleType = 'speeding' | 'geofence_enter' | 'geofence_exit' | 'ignition_on' | 'ignition_off' | 'low_fuel' | 'offline';
+export type AlertRuleType =
+  | 'speeding'
+  | 'geofence_enter'
+  | 'geofence_exit'
+  | 'ignition_on'
+  | 'ignition_off'
+  | 'low_fuel'
+  | 'offline';
 
 @Entity('alert_rules')
 @Index(['organizationId', 'isActive'])
@@ -13,7 +28,18 @@ export class AlertRule {
   @Column()
   name: string;
 
-  @Column({ type: 'enum', enum: ['speeding', 'geofence_enter', 'geofence_exit', 'ignition_on', 'ignition_off', 'low_fuel', 'offline'] })
+  @Column({
+    type: 'enum',
+    enum: [
+      'speeding',
+      'geofence_enter',
+      'geofence_exit',
+      'ignition_on',
+      'ignition_off',
+      'low_fuel',
+      'offline',
+    ],
+  })
   type: AlertRuleType;
 
   @Column({ type: 'jsonb', nullable: true })

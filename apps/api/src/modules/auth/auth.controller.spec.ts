@@ -34,7 +34,7 @@ describe('AuthController — throttle decorators', () => {
 
   it('register calls authService.register', async () => {
     const dto = { name: 'Ali', email: 'ali@test.com', password: 'password123' };
-    const result = await controller.register(dto as any);
+    const result = await controller.register(dto);
     expect(mockAuthService.register).toHaveBeenCalledWith(dto);
     expect(result).toEqual({ accessToken: 'tok' });
   });
@@ -47,12 +47,18 @@ describe('AuthController — throttle decorators', () => {
   });
 
   it('register route has @Throttle metadata (limit=10)', () => {
-    const limit = Reflect.getMetadata('THROTTLER:LIMITdefault', AuthController.prototype.register);
+    const limit = Reflect.getMetadata(
+      'THROTTLER:LIMITdefault',
+      AuthController.prototype.register,
+    );
     expect(limit).toBe(10);
   });
 
   it('login route has @Throttle metadata (limit=10)', () => {
-    const limit = Reflect.getMetadata('THROTTLER:LIMITdefault', AuthController.prototype.login);
+    const limit = Reflect.getMetadata(
+      'THROTTLER:LIMITdefault',
+      AuthController.prototype.login,
+    );
     expect(limit).toBe(10);
   });
 });

@@ -19,7 +19,11 @@ export class AlertEngineService {
     @InjectRepository(Geofence) private geofencesRepo: Repository<Geofence>,
   ) {}
 
-  async evaluate(pos: GpsPosition, vehicleId: string, orgId: string): Promise<Alert | null> {
+  async evaluate(
+    pos: GpsPosition,
+    vehicleId: string,
+    orgId: string,
+  ): Promise<Alert | null> {
     const rules = await this.rulesRepo.find({
       where: [
         { organizationId: orgId, isActive: true, vehicleId },
@@ -34,7 +38,11 @@ export class AlertEngineService {
     return null;
   }
 
-  private async checkRule(rule: AlertRule, pos: GpsPosition, vehicleId: string): Promise<Alert | null> {
+  private async checkRule(
+    rule: AlertRule,
+    pos: GpsPosition,
+    vehicleId: string,
+  ): Promise<Alert | null> {
     let triggered = false;
     let message = '';
     let data: Record<string, unknown> = {};
@@ -67,7 +75,9 @@ export class AlertEngineService {
       case 'geofence_exit': {
         const geofenceId = rule.config?.geofenceId as string;
         if (!geofenceId) break;
-        const geofence = await this.geofencesRepo.findOne({ where: { id: geofenceId, isActive: true } });
+        const geofence = await this.geofencesRepo.findOne({
+          where: { id: geofenceId, isActive: true },
+        });
         if (!geofence) break;
 
         const prev = this.geofenceState.get(vehicleId) ?? new Set<string>();
@@ -75,7 +85,8 @@ export class AlertEngineService {
         const isInside = pointInPolygon(pos.lat, pos.lng, geofence.polygon);
 
         if (!wasInside) prev.delete(geofenceId);
-        if (isInside) prev.add(geofenceId); else prev.delete(geofenceId);
+        if (isInside) prev.add(geofenceId);
+        else prev.delete(geofenceId);
         this.geofenceState.set(vehicleId, prev);
 
         if (rule.type === 'geofence_enter' && !wasInside && isInside) {
@@ -117,10 +128,18 @@ export class AlertEngineService {
     return this.alertsRepo.save(alert);
   }
 
-  private async isDuplicate(ruleId: string, vehicleId: string): Promise<boolean> {
+  private async isDuplicate(
+    ruleId: string,
+    vehicleId: string,
+  ): Promise<boolean> {
     const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000);
     const count = await this.alertsRepo.count({
-      where: { ruleId, vehicleId, acknowledged: false, triggeredAt: MoreThan(fiveMinAgo) },
+      where: {
+        ruleId,
+        vehicleId,
+        acknowledged: false,
+        triggeredAt: MoreThan(fiveMinAgo),
+      },
     });
     return count > 0;
   }

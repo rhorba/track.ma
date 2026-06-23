@@ -8,7 +8,11 @@ export class ReportsController {
   constructor(private service: ReportsService) {}
 
   @Get('summary')
-  summary(@Request() req: any, @Query('from') from: string, @Query('to') to: string) {
+  summary(
+    @Request() req: any,
+    @Query('from') from: string,
+    @Query('to') to: string,
+  ) {
     return this.service.getFleetSummary(
       req.user.organizationId,
       new Date(from || Date.now() - 30 * 86400000),

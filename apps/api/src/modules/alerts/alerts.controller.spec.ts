@@ -36,7 +36,10 @@ describe('AlertsController', () => {
   it('createRule merges orgId into body', async () => {
     const body = { type: 'speeding', config: { speedLimit: 120 } };
     await controller.createRule(body, REQ);
-    expect(mockService.createRule).toHaveBeenCalledWith({ ...body, organizationId: 'org-1' });
+    expect(mockService.createRule).toHaveBeenCalledWith({
+      ...body,
+      organizationId: 'org-1',
+    });
   });
 
   it('acknowledge delegates to service.acknowledge with id', async () => {

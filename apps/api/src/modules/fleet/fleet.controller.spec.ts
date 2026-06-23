@@ -41,7 +41,11 @@ describe('FleetController', () => {
   });
 
   it('getHistory returns position history with parsed dates', async () => {
-    const result = await controller.getHistory('v-1', '2026-01-01', '2026-01-31');
+    const result = await controller.getHistory(
+      'v-1',
+      '2026-01-01',
+      '2026-01-31',
+    );
     expect(mockFleetService.getHistory).toHaveBeenCalledWith(
       'v-1',
       new Date('2026-01-01'),

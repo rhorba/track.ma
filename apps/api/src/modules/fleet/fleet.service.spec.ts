@@ -22,7 +22,12 @@ const mockRedis = {
   get: jest.fn(),
 };
 
-const VEHICLE: Partial<Vehicle> = { id: 'v-1', imei: '123456789012345', organizationId: 'org-1', isActive: true };
+const VEHICLE: Partial<Vehicle> = {
+  id: 'v-1',
+  imei: '123456789012345',
+  organizationId: 'org-1',
+  isActive: true,
+};
 
 const BASE_POS = {
   imei: '123456789012345',
@@ -86,7 +91,9 @@ describe('FleetService', () => {
       mockPositionsRepo.create.mockReturnValue({});
       mockPositionsRepo.save.mockResolvedValue({});
       await service.storePosition({ ...BASE_POS, ignition: true, speed: 60 });
-      expect(mockVehiclesRepo.update).toHaveBeenCalledWith(VEHICLE.id, { status: 'active' });
+      expect(mockVehiclesRepo.update).toHaveBeenCalledWith(VEHICLE.id, {
+        status: 'active',
+      });
     });
 
     it('sets status to idle when ignition=true and speed=0', async () => {
@@ -94,7 +101,9 @@ describe('FleetService', () => {
       mockPositionsRepo.create.mockReturnValue({});
       mockPositionsRepo.save.mockResolvedValue({});
       await service.storePosition({ ...BASE_POS, ignition: true, speed: 0 });
-      expect(mockVehiclesRepo.update).toHaveBeenCalledWith(VEHICLE.id, { status: 'idle' });
+      expect(mockVehiclesRepo.update).toHaveBeenCalledWith(VEHICLE.id, {
+        status: 'idle',
+      });
     });
 
     it('sets status to offline when ignition=false', async () => {
@@ -102,7 +111,9 @@ describe('FleetService', () => {
       mockPositionsRepo.create.mockReturnValue({});
       mockPositionsRepo.save.mockResolvedValue({});
       await service.storePosition({ ...BASE_POS, ignition: false, speed: 0 });
-      expect(mockVehiclesRepo.update).toHaveBeenCalledWith(VEHICLE.id, { status: 'offline' });
+      expect(mockVehiclesRepo.update).toHaveBeenCalledWith(VEHICLE.id, {
+        status: 'offline',
+      });
     });
   });
 

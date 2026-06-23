@@ -5,15 +5,17 @@ import { Geofence } from '../../entities/geofence.entity';
 
 @Injectable()
 export class GeofencesService {
-  constructor(
-    @InjectRepository(Geofence) private repo: Repository<Geofence>,
-  ) {}
+  constructor(@InjectRepository(Geofence) private repo: Repository<Geofence>) {}
 
   list(organizationId: string) {
     return this.repo.find({ where: { organizationId, isActive: true } });
   }
 
-  create(data: { name: string; polygon: { lat: number; lng: number }[]; organizationId: string }) {
+  create(data: {
+    name: string;
+    polygon: { lat: number; lng: number }[];
+    organizationId: string;
+  }) {
     if (!data.polygon || data.polygon.length < 3) {
       throw new BadRequestException('Polygon must have at least 3 points');
     }

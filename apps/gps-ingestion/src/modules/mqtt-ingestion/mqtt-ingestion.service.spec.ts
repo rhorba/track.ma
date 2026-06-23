@@ -62,7 +62,10 @@ describe('MqttIngestionService', () => {
       providers: [
         MqttIngestionService,
         { provide: 'REDIS_PUBLISHER', useValue: redis },
-        { provide: ConfigService, useValue: { get: jest.fn().mockReturnValue('mqtt://localhost:1883') } },
+        {
+          provide: ConfigService,
+          useValue: { get: jest.fn().mockReturnValue('mqtt://localhost:1883') },
+        },
       ],
     }).compile();
 
@@ -73,7 +76,9 @@ describe('MqttIngestionService', () => {
   afterEach(() => service.onModuleDestroy());
 
   const dispatchMessage = (topic: string, payload: Buffer) => {
-    const messageHandler = mockMqttClient.on.mock.calls.find(([e]) => e === 'message')?.[1];
+    const messageHandler = mockMqttClient.on.mock.calls.find(
+      ([e]) => e === 'message',
+    )?.[1];
     return messageHandler?.(topic, payload);
   };
 
@@ -88,22 +93,34 @@ describe('MqttIngestionService', () => {
   });
 
   it('drops payload with invalid lat (NaN)', async () => {
-    await dispatchMessage('trackma/devices/imei1/position', validPayload({ lat: NaN }));
+    await dispatchMessage(
+      'trackma/devices/imei1/position',
+      validPayload({ lat: NaN }),
+    );
     expect(redis.publish).not.toHaveBeenCalled();
   });
 
   it('drops payload with lat out of range (>90)', async () => {
-    await dispatchMessage('trackma/devices/imei1/position', validPayload({ lat: 95 }));
+    await dispatchMessage(
+      'trackma/devices/imei1/position',
+      validPayload({ lat: 95 }),
+    );
     expect(redis.publish).not.toHaveBeenCalled();
   });
 
   it('drops payload with negative speed', async () => {
-    await dispatchMessage('trackma/devices/imei1/position', validPayload({ speed: -10 }));
+    await dispatchMessage(
+      'trackma/devices/imei1/position',
+      validPayload({ speed: -10 }),
+    );
     expect(redis.publish).not.toHaveBeenCalled();
   });
 
   it('drops malformed JSON on /position topic', async () => {
-    await dispatchMessage('trackma/devices/imei1/position', Buffer.from('not json'));
+    await dispatchMessage(
+      'trackma/devices/imei1/position',
+      Buffer.from('not json'),
+    );
     expect(redis.publish).not.toHaveBeenCalled();
   });
 
@@ -111,7 +128,7 @@ describe('MqttIngestionService', () => {
 
   it('parses a valid Teltonika record and publishes', async () => {
     await dispatchMessage('trackma/teltonika/imei456', teltonikaPayload());
-    const call = (redis.publish as jest.Mock).mock.calls[0];
+    const call = redis.publish.mock.calls[0];
     const published = JSON.parse(call[1]);
     expect(published.imei).toBe('imei456');
     expect(published.ignition).toBe(true);
@@ -125,7 +142,10 @@ describe('MqttIngestionService', () => {
   });
 
   it('drops Teltonika record with invalid coordinates', async () => {
-    await dispatchMessage('trackma/teltonika/imei1', teltonikaPayload({ lat: undefined }));
+    await dispatchMessage(
+      'trackma/teltonika/imei1',
+      teltonikaPayload({ lat: undefined }),
+    );
     expect(redis.publish).not.toHaveBeenCalled();
   });
 

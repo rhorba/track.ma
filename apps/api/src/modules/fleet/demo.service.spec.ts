@@ -40,10 +40,10 @@ describe('DemoService', () => {
   it('getInitialPositions returns coords within Casablanca bounding box', () => {
     const positions = service.getInitialPositions();
     positions.forEach((p) => {
-      expect(p.lat).toBeGreaterThanOrEqual(33.50);
+      expect(p.lat).toBeGreaterThanOrEqual(33.5);
       expect(p.lat).toBeLessThanOrEqual(33.65);
-      expect(p.lng).toBeGreaterThanOrEqual(-7.70);
-      expect(p.lng).toBeLessThanOrEqual(-7.50);
+      expect(p.lng).toBeGreaterThanOrEqual(-7.7);
+      expect(p.lng).toBeLessThanOrEqual(-7.5);
     });
   });
 
@@ -68,7 +68,7 @@ describe('DemoService', () => {
     service.broadcast();
     const positions = service.getInitialPositions();
     positions.forEach((p) => {
-      expect(p.lat).toBeGreaterThanOrEqual(33.50);
+      expect(p.lat).toBeGreaterThanOrEqual(33.5);
       expect(p.lat).toBeLessThanOrEqual(33.65);
     });
   });

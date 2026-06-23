@@ -32,7 +32,11 @@ export class MailService {
     }
   }
 
-  async sendInvite(to: string, orgName: string, inviteUrl: string): Promise<void> {
+  async sendInvite(
+    to: string,
+    orgName: string,
+    inviteUrl: string,
+  ): Promise<void> {
     await this.sendAlert(
       to,
       `You've been invited to ${orgName} on TrackMa`,

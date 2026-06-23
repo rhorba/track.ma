@@ -63,7 +63,10 @@ describe('TripDetectorService', () => {
 
   it('closes a trip on ignition OFF', async () => {
     await service.process(makePos({ ignition: true }), 'v-1');
-    await service.process(makePos({ ignition: false, timestamp: later }), 'v-1');
+    await service.process(
+      makePos({ ignition: false, timestamp: later }),
+      'v-1',
+    );
     expect(tripsRepo.save).toHaveBeenCalledTimes(2);
     const closedTrip = tripsRepo.save.mock.calls[1][0];
     expect(closedTrip.isComplete).toBe(true);
@@ -71,9 +74,18 @@ describe('TripDetectorService', () => {
   });
 
   it('accumulates distance across positions', async () => {
-    await service.process(makePos({ ignition: true, lat: 33.9, lng: -6.85 }), 'v-1');
-    await service.process(makePos({ ignition: true, lat: 33.95, lng: -6.85 }), 'v-1');
-    await service.process(makePos({ ignition: false, lat: 33.95, lng: -6.85, timestamp: later }), 'v-1');
+    await service.process(
+      makePos({ ignition: true, lat: 33.9, lng: -6.85 }),
+      'v-1',
+    );
+    await service.process(
+      makePos({ ignition: true, lat: 33.95, lng: -6.85 }),
+      'v-1',
+    );
+    await service.process(
+      makePos({ ignition: false, lat: 33.95, lng: -6.85, timestamp: later }),
+      'v-1',
+    );
     const closedTrip = tripsRepo.save.mock.calls[1][0];
     expect(closedTrip.distanceKm).toBeGreaterThan(0);
   });

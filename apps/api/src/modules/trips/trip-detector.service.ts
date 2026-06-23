@@ -18,9 +18,7 @@ export class TripDetectorService {
   private readonly logger = new Logger(TripDetectorService.name);
   private readonly openTrips = new Map<string, OpenTrip>();
 
-  constructor(
-    @InjectRepository(Trip) private tripsRepo: Repository<Trip>,
-  ) {}
+  constructor(@InjectRepository(Trip) private tripsRepo: Repository<Trip>) {}
 
   async process(pos: GpsPosition, vehicleId: string): Promise<void> {
     const open = this.openTrips.get(vehicleId);
@@ -71,7 +69,11 @@ export class TripDetectorService {
     open.lastLng = pos.lng;
   }
 
-  private async closeTrip(open: OpenTrip, pos: GpsPosition, vehicleId: string): Promise<void> {
+  private async closeTrip(
+    open: OpenTrip,
+    pos: GpsPosition,
+    vehicleId: string,
+  ): Promise<void> {
     const trip = open.trip;
     trip.endedAt = pos.timestamp;
     trip.endLat = pos.lat;
@@ -79,10 +81,13 @@ export class TripDetectorService {
     trip.durationSeconds = Math.round(
       (pos.timestamp.getTime() - trip.startedAt.getTime()) / 1000,
     );
-    trip.avgSpeedKmh = open.speedCount > 0 ? open.speedSum / open.speedCount : 0;
+    trip.avgSpeedKmh =
+      open.speedCount > 0 ? open.speedSum / open.speedCount : 0;
     trip.isComplete = true;
     await this.tripsRepo.save(trip);
     this.openTrips.delete(vehicleId);
-    this.logger.log(`Trip closed for vehicle ${vehicleId} — ${trip.distanceKm.toFixed(2)} km`);
+    this.logger.log(
+      `Trip closed for vehicle ${vehicleId} — ${trip.distanceKm.toFixed(2)} km`,
+    );
   }
 }

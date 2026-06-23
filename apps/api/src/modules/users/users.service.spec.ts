@@ -11,7 +11,12 @@ const mockRepo = {
 };
 
 const ORG_ID = 'org-1';
-const USER: Partial<User> = { id: 'u-1', organizationId: ORG_ID, name: 'Ali', role: 'viewer' as any };
+const USER: Partial<User> = {
+  id: 'u-1',
+  organizationId: ORG_ID,
+  name: 'Ali',
+  role: 'viewer',
+};
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -42,27 +47,40 @@ describe('UsersService', () => {
 
   describe('updateRole', () => {
     it('throws ForbiddenException when trying to change own role', async () => {
-      await expect(service.updateRole('u-1', 'org_admin' as any, 'u-1', ORG_ID))
-        .rejects.toThrow(ForbiddenException);
+      await expect(
+        service.updateRole('u-1', 'org_admin' as any, 'u-1', ORG_ID),
+      ).rejects.toThrow(ForbiddenException);
     });
 
     it('throws NotFoundException when target user not found', async () => {
       mockRepo.findOne.mockResolvedValue(null);
-      await expect(service.updateRole('u-2', 'fleet_manager' as any, 'u-1', ORG_ID))
-        .rejects.toThrow(NotFoundException);
+      await expect(
+        service.updateRole('u-2', 'fleet_manager' as any, 'u-1', ORG_ID),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it('throws ForbiddenException when target is in different org', async () => {
-      mockRepo.findOne.mockResolvedValue({ ...USER, organizationId: 'other-org' });
-      await expect(service.updateRole('u-2', 'viewer' as any, 'u-1', ORG_ID))
-        .rejects.toThrow(ForbiddenException);
+      mockRepo.findOne.mockResolvedValue({
+        ...USER,
+        organizationId: 'other-org',
+      });
+      await expect(
+        service.updateRole('u-2', 'viewer' as any, 'u-1', ORG_ID),
+      ).rejects.toThrow(ForbiddenException);
     });
 
     it('updates role and returns updated user', async () => {
       mockRepo.findOne.mockResolvedValue(USER);
       mockRepo.update.mockResolvedValue(undefined);
-      const result = await service.updateRole('u-1', 'fleet_manager' as any, 'requester-id', ORG_ID);
-      expect(mockRepo.update).toHaveBeenCalledWith('u-1', { role: 'fleet_manager' });
+      const result = await service.updateRole(
+        'u-1',
+        'fleet_manager',
+        'requester-id',
+        ORG_ID,
+      );
+      expect(mockRepo.update).toHaveBeenCalledWith('u-1', {
+        role: 'fleet_manager',
+      });
       expect(result.role).toBe('fleet_manager');
     });
   });

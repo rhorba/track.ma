@@ -12,7 +12,10 @@ export class OrganizationsService {
   ) {}
 
   findById(id: string) {
-    return this.repo.findOneOrFail({ where: { id }, relations: ['users', 'vehicles'] });
+    return this.repo.findOneOrFail({
+      where: { id },
+      relations: ['users', 'vehicles'],
+    });
   }
 
   findBySlug(slug: string) {
@@ -32,7 +35,9 @@ export class OrganizationsService {
         .innerJoin('o.vehicles', 'v', 'v.is_active = true')
         .where('o.id = :orgId', { orgId })
         .getCount(),
-      this.usersRepo.count({ where: { organizationId: orgId, isActive: true } }),
+      this.usersRepo.count({
+        where: { organizationId: orgId, isActive: true },
+      }),
     ]);
     return {
       tier: org.tier,

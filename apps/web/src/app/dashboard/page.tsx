@@ -18,7 +18,7 @@ function StatusBadge({ active, idle, offline }: { active: number; idle: number; 
       </span>
       <span className="flex items-center gap-1.5">
         <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
-        <span className="text-slate-600 dark:text-slate-400">{idle} À l'arrêt</span>
+        <span className="text-slate-600 dark:text-slate-400">{idle} À l&apos;arrêt</span>
       </span>
       <span className="flex items-center gap-1.5">
         <span className="w-2 h-2 rounded-full bg-slate-400 inline-block" />

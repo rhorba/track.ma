@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Vehicle } from '../../entities/vehicle.entity';
@@ -19,13 +24,18 @@ export class VehiclesService {
   async findOne(id: string, organizationId: string) {
     const vehicle = await this.repo.findOne({ where: { id } });
     if (!vehicle) throw new NotFoundException('Vehicle not found');
-    if (vehicle.organizationId !== organizationId) throw new ForbiddenException();
+    if (vehicle.organizationId !== organizationId)
+      throw new ForbiddenException();
     return vehicle;
   }
 
   async create(dto: CreateVehicleDto, organizationId: string) {
-    const org = await this.orgsRepo.findOneOrFail({ where: { id: organizationId } });
-    const count = await this.repo.count({ where: { organizationId, isActive: true } });
+    const org = await this.orgsRepo.findOneOrFail({
+      where: { id: organizationId },
+    });
+    const count = await this.repo.count({
+      where: { organizationId, isActive: true },
+    });
     if (count >= org.vehicleLimit) {
       throw new BadRequestException(
         `Vehicle limit of ${org.vehicleLimit} reached for your plan (${org.tier}). Upgrade to add more vehicles.`,

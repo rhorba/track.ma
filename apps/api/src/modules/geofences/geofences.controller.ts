@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { IsString, IsArray, ValidateNested, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -34,7 +43,10 @@ export class GeofencesController {
 
   @Post()
   create(@Body() body: CreateGeofenceDto, @Request() req: any) {
-    return this.service.create({ ...body, organizationId: req.user.organizationId });
+    return this.service.create({
+      ...body,
+      organizationId: req.user.organizationId,
+    });
   }
 
   @Delete(':id')

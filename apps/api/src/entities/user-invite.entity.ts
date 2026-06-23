@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn, Index } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Index,
+} from 'typeorm';
 import { Organization } from './organization.entity';
 import { User } from './user.entity';
 
@@ -29,7 +37,11 @@ export class UserInvite {
   @JoinColumn({ name: 'invited_by_user_id' })
   invitedBy: User;
 
-  @Column({ type: 'enum', enum: ['org_admin', 'fleet_manager', 'viewer', 'driver'], default: 'viewer' })
+  @Column({
+    type: 'enum',
+    enum: ['org_admin', 'fleet_manager', 'viewer', 'driver'],
+    default: 'viewer',
+  })
   role: string;
 
   @Column()

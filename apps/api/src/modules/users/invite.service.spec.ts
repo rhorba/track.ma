@@ -19,7 +19,9 @@ const makeMailService = () => ({
 });
 
 const makeConfigService = () => ({
-  get: jest.fn((key: string) => (key === 'APP_URL' ? 'http://localhost:3000' : undefined)),
+  get: jest.fn((key: string) =>
+    key === 'APP_URL' ? 'http://localhost:3000' : undefined,
+  ),
 });
 
 describe('InviteService', () => {
@@ -46,10 +48,21 @@ describe('InviteService', () => {
   it('creates a new invite and sends email when no prior invite exists', async () => {
     repo.findOne.mockResolvedValue(null);
 
-    await service.send('new@user.ma', 'viewer', 'org-1', 'admin-1', 'Acme Corp');
+    await service.send(
+      'new@user.ma',
+      'viewer',
+      'org-1',
+      'admin-1',
+      'Acme Corp',
+    );
 
     expect(repo.save).toHaveBeenCalledWith(
-      expect.objectContaining({ email: 'new@user.ma', organizationId: 'org-1', invitedByUserId: 'admin-1', role: 'viewer' }),
+      expect.objectContaining({
+        email: 'new@user.ma',
+        organizationId: 'org-1',
+        invitedByUserId: 'admin-1',
+        role: 'viewer',
+      }),
     );
     expect(mail.sendInvite).toHaveBeenCalledWith(
       'new@user.ma',
@@ -104,15 +117,16 @@ describe('InviteService', () => {
     };
     repo.findOne.mockResolvedValue(activeInvite);
 
-    await expect(service.send('a@b.ma', 'viewer', 'org-1', 'admin-1', 'Org'))
-      .rejects.toThrow(BadRequestException);
+    await expect(
+      service.send('a@b.ma', 'viewer', 'org-1', 'admin-1', 'Org'),
+    ).rejects.toThrow(BadRequestException);
     expect(repo.save).not.toHaveBeenCalled();
     expect(mail.sendInvite).not.toHaveBeenCalled();
   });
 
   it('uses APP_URL from config for the invite link', async () => {
     await service.send('x@y.ma', 'fleet_manager', 'org-1', 'admin-1', 'Org');
-    const inviteUrl = (mail.sendInvite as jest.Mock).mock.calls[0][2] as string;
+    const inviteUrl = mail.sendInvite.mock.calls[0][2] as string;
     expect(inviteUrl).toContain('http://localhost:3000');
   });
 });

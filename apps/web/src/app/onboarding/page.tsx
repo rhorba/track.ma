@@ -83,7 +83,7 @@ export default function OnboardingPage() {
               <div>
                 <h1 className="text-xl font-semibold text-slate-900 dark:text-white">Welcome to track.ma</h1>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                  Your organization is ready. Let's set up your fleet in 2 quick steps.
+                  Your organization is ready. Let&apos;s set up your fleet in 2 quick steps.
                 </p>
               </div>
               {user && (

@@ -11,7 +11,9 @@ jest.mock('stripe', () => {
     },
     checkout: {
       sessions: {
-        create: jest.fn().mockResolvedValue({ url: 'https://checkout.stripe.com/session' }),
+        create: jest
+          .fn()
+          .mockResolvedValue({ url: 'https://checkout.stripe.com/session' }),
       },
     },
     webhooks: {
@@ -59,15 +61,31 @@ describe('BillingService', () => {
 
   describe('createCheckoutSession', () => {
     it('creates a new Stripe customer when org has none', async () => {
-      mockOrgsRepo.findOneOrFail.mockResolvedValueOnce({ id: 'org-1', stripeCustomerId: null });
-      const result = await service.createCheckoutSession('org-1', 'price_pro', 'https://app.track.ma');
+      mockOrgsRepo.findOneOrFail.mockResolvedValueOnce({
+        id: 'org-1',
+        stripeCustomerId: null,
+      });
+      const result = await service.createCheckoutSession(
+        'org-1',
+        'price_pro',
+        'https://app.track.ma',
+      );
       expect(result).toHaveProperty('url');
-      expect(mockOrgsRepo.update).toHaveBeenCalledWith('org-1', { stripeCustomerId: 'cus_new' });
+      expect(mockOrgsRepo.update).toHaveBeenCalledWith('org-1', {
+        stripeCustomerId: 'cus_new',
+      });
     });
 
     it('reuses existing Stripe customer', async () => {
-      mockOrgsRepo.findOneOrFail.mockResolvedValueOnce({ id: 'org-1', stripeCustomerId: 'cus_existing' });
-      const result = await service.createCheckoutSession('org-1', 'price_pro', 'https://app.track.ma');
+      mockOrgsRepo.findOneOrFail.mockResolvedValueOnce({
+        id: 'org-1',
+        stripeCustomerId: 'cus_existing',
+      });
+      const result = await service.createCheckoutSession(
+        'org-1',
+        'price_pro',
+        'https://app.track.ma',
+      );
       expect(result).toHaveProperty('url');
     });
   });

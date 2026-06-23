@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Organization } from './organization.entity';
 
 export type UserRole = 'org_admin' | 'fleet_manager' | 'viewer' | 'driver';
@@ -17,7 +25,11 @@ export class User {
   @Column({ select: false })
   passwordHash: string;
 
-  @Column({ type: 'enum', enum: ['org_admin', 'fleet_manager', 'viewer', 'driver'], default: 'viewer' })
+  @Column({
+    type: 'enum',
+    enum: ['org_admin', 'fleet_manager', 'viewer', 'driver'],
+    default: 'viewer',
+  })
   role: UserRole;
 
   @Column({ default: true })

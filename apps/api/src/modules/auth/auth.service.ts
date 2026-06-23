@@ -1,4 +1,10 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -20,13 +26,19 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    const existing = await this.usersRepo.findOne({ where: { email: dto.email } });
+    const existing = await this.usersRepo.findOne({
+      where: { email: dto.email },
+    });
     if (existing) throw new ConflictException('Email already in use');
 
     let org: Organization | null = null;
     if (dto.organizationName) {
       const slug = dto.organizationName.toLowerCase().replace(/\s+/g, '-');
-      org = this.orgsRepo.create({ name: dto.organizationName, slug, vehicleLimit: 2 });
+      org = this.orgsRepo.create({
+        name: dto.organizationName,
+        slug,
+        vehicleLimit: 2,
+      });
       org = await this.orgsRepo.save(org);
     }
 
@@ -45,9 +57,18 @@ export class AuthService {
   async login(dto: LoginDto) {
     const user = await this.usersRepo.findOne({
       where: { email: dto.email },
-      select: ['id', 'email', 'name', 'role', 'organizationId', 'isActive', 'passwordHash'],
+      select: [
+        'id',
+        'email',
+        'name',
+        'role',
+        'organizationId',
+        'isActive',
+        'passwordHash',
+      ],
     });
-    if (!user || !user.isActive) throw new UnauthorizedException('Invalid credentials');
+    if (!user || !user.isActive)
+      throw new UnauthorizedException('Invalid credentials');
 
     const valid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
@@ -58,7 +79,14 @@ export class AuthService {
   async refresh(userId: string, refreshToken: string) {
     const user = await this.usersRepo.findOne({
       where: { id: userId },
-      select: ['id', 'email', 'role', 'organizationId', 'isActive', 'refreshTokenHash'],
+      select: [
+        'id',
+        'email',
+        'role',
+        'organizationId',
+        'isActive',
+        'refreshTokenHash',
+      ],
     });
     if (!user || !user.refreshTokenHash) throw new UnauthorizedException();
 
@@ -73,18 +101,25 @@ export class AuthService {
   }
 
   async acceptInvite(token: string, name: string, password: string) {
-    const invite = await this.invitesRepo.findOne({ where: { token, isActive: true } });
+    const invite = await this.invitesRepo.findOne({
+      where: { token, isActive: true },
+    });
     if (!invite) throw new NotFoundException('Invalid or expired invite token');
-    if (invite.expiresAt < new Date()) throw new BadRequestException('Invite token has expired');
+    if (invite.expiresAt < new Date())
+      throw new BadRequestException('Invite token has expired');
 
-    const existing = await this.usersRepo.findOne({ where: { email: invite.email } });
-    if (existing) throw new ConflictException('An account with this email already exists');
+    const existing = await this.usersRepo.findOne({
+      where: { email: invite.email },
+    });
+    if (existing)
+      throw new ConflictException('An account with this email already exists');
 
     const updated = await this.invitesRepo.update(
       { id: invite.id, isActive: true },
       { isActive: false, acceptedAt: new Date() },
     );
-    if (!updated.affected) throw new BadRequestException('Invite already accepted');
+    if (!updated.affected)
+      throw new BadRequestException('Invite already accepted');
 
     const passwordHash = await bcrypt.hash(password, 12);
     const entity = this.usersRepo.create({
@@ -99,7 +134,13 @@ export class AuthService {
   }
 
   private async issueTokens(user: User) {
-    const payload = { sub: user.id, email: user.email, name: user.name, orgId: user.organizationId, role: user.role };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      name: user.name,
+      orgId: user.organizationId,
+      role: user.role,
+    };
 
     const accessToken = this.jwtService.sign(payload);
     const refreshToken = this.jwtService.sign(payload, {
@@ -110,6 +151,16 @@ export class AuthService {
     const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
     await this.usersRepo.update(user.id, { refreshTokenHash });
 
-    return { accessToken, refreshToken, user: { id: user.id, email: user.email, name: user.name, role: user.role, organizationId: user.organizationId } };
+    return {
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        organizationId: user.organizationId,
+      },
+    };
   }
 }

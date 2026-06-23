@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Patch, Body, Param, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  Param,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AlertsService } from './alerts.service';
 
@@ -19,7 +28,10 @@ export class AlertsController {
 
   @Post('rules')
   createRule(@Body() body: any, @Request() req: any) {
-    return this.service.createRule({ ...body, organizationId: req.user.organizationId });
+    return this.service.createRule({
+      ...body,
+      organizationId: req.user.organizationId,
+    });
   }
 
   @Patch(':id/acknowledge')

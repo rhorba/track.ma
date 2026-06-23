@@ -48,25 +48,38 @@ describe('UsersController', () => {
 
   it('invite sends invite with correct params', async () => {
     const body = { email: 'new@test.ma', role: 'viewer' };
-    await controller.invite(body as any, REQ);
+    await controller.invite(body, REQ);
     expect(mockOrgsService.findById).toHaveBeenCalledWith('org-1');
     expect(mockInviteService.send).toHaveBeenCalledWith(
-      'new@test.ma', 'viewer', 'org-1', 'u-1', 'Transport Co',
+      'new@test.ma',
+      'viewer',
+      'org-1',
+      'u-1',
+      'Transport Co',
     );
   });
 
   it('invite uses default viewer role when role not specified', async () => {
     const body = { email: 'new@test.ma' };
-    await controller.invite(body as any, REQ);
+    await controller.invite(body, REQ);
     expect(mockInviteService.send).toHaveBeenCalledWith(
-      'new@test.ma', 'viewer', 'org-1', 'u-1', 'Transport Co',
+      'new@test.ma',
+      'viewer',
+      'org-1',
+      'u-1',
+      'Transport Co',
     );
   });
 
   it('updateRole delegates to usersService', async () => {
     const body = { role: 'fleet_manager' };
-    const result = await controller.updateRole('u-2', body as any, REQ);
-    expect(mockUsersService.updateRole).toHaveBeenCalledWith('u-2', 'fleet_manager', 'u-1', 'org-1');
+    const result = await controller.updateRole('u-2', body, REQ);
+    expect(mockUsersService.updateRole).toHaveBeenCalledWith(
+      'u-2',
+      'fleet_manager',
+      'u-1',
+      'org-1',
+    );
     expect(result.role).toBe('fleet_manager');
   });
 });

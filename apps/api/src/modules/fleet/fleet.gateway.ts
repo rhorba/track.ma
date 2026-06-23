@@ -28,7 +28,10 @@ export class FleetGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private tripDetector: TripDetectorService,
   ) {
     this.redisSub.subscribe(REDIS_CHANNELS.GPS_POSITION);
-    this.redisSub.on('message', (_channel, message) => void this.handlePosition(message));
+    this.redisSub.on(
+      'message',
+      (_channel, message) => void this.handlePosition(message),
+    );
   }
 
   private async handlePosition(message: string): Promise<void> {
@@ -39,7 +42,11 @@ export class FleetGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       this.server.to(`org:${pos.organizationId}`).emit('position', pos);
 
-      const alert = await this.alertEngine.evaluate(pos, vehicle.id, pos.organizationId);
+      const alert = await this.alertEngine.evaluate(
+        pos,
+        vehicle.id,
+        pos.organizationId,
+      );
       if (alert) {
         this.server.to(`org:${pos.organizationId}`).emit('alert', alert);
       }
@@ -59,7 +66,10 @@ export class FleetGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('join')
-  handleJoin(@ConnectedSocket() client: Socket, @MessageBody() data: { orgId: string }) {
+  handleJoin(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { orgId: string },
+  ) {
     client.join(`org:${data.orgId}`);
   }
 

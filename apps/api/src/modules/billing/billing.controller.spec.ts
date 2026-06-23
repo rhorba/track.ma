@@ -3,7 +3,9 @@ import { BillingController } from './billing.controller';
 import { BillingService } from './billing.service';
 
 const mockService = {
-  createCheckoutSession: jest.fn().mockResolvedValue({ url: 'https://checkout.stripe.com/...' }),
+  createCheckoutSession: jest
+    .fn()
+    .mockResolvedValue({ url: 'https://checkout.stripe.com/...' }),
   handleWebhook: jest.fn().mockResolvedValue(undefined),
 };
 
@@ -24,7 +26,11 @@ describe('BillingController', () => {
   it('checkout delegates to service with orgId, priceId, returnUrl', async () => {
     const body = { priceId: 'price_pro', returnUrl: 'https://app.track.ma' };
     const result = await controller.checkout(body, REQ);
-    expect(mockService.createCheckoutSession).toHaveBeenCalledWith('org-1', 'price_pro', 'https://app.track.ma');
+    expect(mockService.createCheckoutSession).toHaveBeenCalledWith(
+      'org-1',
+      'price_pro',
+      'https://app.track.ma',
+    );
     expect(result).toHaveProperty('url');
   });
 
@@ -32,6 +38,9 @@ describe('BillingController', () => {
     const rawBody = Buffer.from('{}');
     const req = { rawBody } as any;
     await controller.webhook(req, 'stripe-sig-abc');
-    expect(mockService.handleWebhook).toHaveBeenCalledWith(rawBody, 'stripe-sig-abc');
+    expect(mockService.handleWebhook).toHaveBeenCalledWith(
+      rawBody,
+      'stripe-sig-abc',
+    );
   });
 });

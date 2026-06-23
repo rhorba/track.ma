@@ -2,7 +2,7 @@ import { Reflector } from '@nestjs/core';
 import { ExecutionContext } from '@nestjs/common';
 import { RolesGuard } from './roles.guard';
 
-function makeContext(role: string | undefined, _requiredRoles?: string[]): ExecutionContext {
+function makeContext(role: string | undefined): ExecutionContext {
   return {
     getHandler: () => ({}),
     getClass: () => ({}),
@@ -23,31 +23,33 @@ describe('RolesGuard', () => {
 
   it('allows access when no roles are required', () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(undefined);
-    const ctx = makeContext('viewer', undefined);
+    const ctx = makeContext('viewer');
     expect(guard.canActivate(ctx)).toBe(true);
   });
 
   it('allows access when user role matches required role', () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['org_admin']);
-    const ctx = makeContext('org_admin', ['org_admin']);
+    const ctx = makeContext('org_admin');
     expect(guard.canActivate(ctx)).toBe(true);
   });
 
   it('denies access when user role does not match required role', () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['org_admin']);
-    const ctx = makeContext('viewer', ['org_admin']);
+    const ctx = makeContext('viewer');
     expect(guard.canActivate(ctx)).toBe(false);
   });
 
   it('denies access when user is undefined', () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['org_admin']);
-    const ctx = makeContext(undefined, ['org_admin']);
+    const ctx = makeContext(undefined);
     expect(guard.canActivate(ctx)).toBe(false);
   });
 
   it('allows access when user has one of multiple allowed roles', () => {
-    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['org_admin', 'fleet_manager']);
-    const ctx = makeContext('fleet_manager', ['org_admin', 'fleet_manager']);
+    jest
+      .spyOn(reflector, 'getAllAndOverride')
+      .mockReturnValue(['org_admin', 'fleet_manager']);
+    const ctx = makeContext('fleet_manager');
     expect(guard.canActivate(ctx)).toBe(true);
   });
 });

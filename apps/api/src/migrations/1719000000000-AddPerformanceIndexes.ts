@@ -58,13 +58,29 @@ export class AddPerformanceIndexes1719000000000 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP INDEX CONCURRENTLY IF EXISTS "IDX_positions_vehicle_timestamp"`);
-    await queryRunner.query(`DROP INDEX CONCURRENTLY IF EXISTS "IDX_alerts_vehicle_triggered"`);
-    await queryRunner.query(`DROP INDEX CONCURRENTLY IF EXISTS "IDX_alerts_vehicle_acknowledged"`);
-    await queryRunner.query(`DROP INDEX CONCURRENTLY IF EXISTS "IDX_geofences_org_active"`);
-    await queryRunner.query(`DROP INDEX CONCURRENTLY IF EXISTS "IDX_trips_vehicle_started"`);
-    await queryRunner.query(`DROP INDEX CONCURRENTLY IF EXISTS "IDX_trips_vehicle_incomplete"`);
-    await queryRunner.query(`DROP INDEX CONCURRENTLY IF EXISTS "IDX_alert_rules_org_active"`);
-    await queryRunner.query(`DROP INDEX CONCURRENTLY IF EXISTS "IDX_vehicles_org_active"`);
+    await queryRunner.query(
+      `DROP INDEX CONCURRENTLY IF EXISTS "IDX_positions_vehicle_timestamp"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX CONCURRENTLY IF EXISTS "IDX_alerts_vehicle_triggered"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX CONCURRENTLY IF EXISTS "IDX_alerts_vehicle_acknowledged"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX CONCURRENTLY IF EXISTS "IDX_geofences_org_active"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX CONCURRENTLY IF EXISTS "IDX_trips_vehicle_started"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX CONCURRENTLY IF EXISTS "IDX_trips_vehicle_incomplete"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX CONCURRENTLY IF EXISTS "IDX_alert_rules_org_active"`,
+    );
+    await queryRunner.query(
+      `DROP INDEX CONCURRENTLY IF EXISTS "IDX_vehicles_org_active"`,
+    );
   }
 }

@@ -27,7 +27,9 @@ describe('pointInPolygon', () => {
 
 describe('haversineKm', () => {
   it('returns 0 for identical points', () => {
-    expect(haversineKm({ lat: 33.9, lng: -6.85 }, { lat: 33.9, lng: -6.85 })).toBe(0);
+    expect(
+      haversineKm({ lat: 33.9, lng: -6.85 }, { lat: 33.9, lng: -6.85 }),
+    ).toBe(0);
   });
 
   it('returns roughly 111 km per degree of latitude', () => {
@@ -36,7 +38,10 @@ describe('haversineKm', () => {
   });
 
   it('returns positive distance for any two distinct points', () => {
-    const d = haversineKm({ lat: 31.79, lng: -7.09 }, { lat: 33.98, lng: -6.85 });
+    const d = haversineKm(
+      { lat: 31.79, lng: -7.09 },
+      { lat: 33.98, lng: -6.85 },
+    );
     expect(d).toBeGreaterThan(0);
   });
 });

@@ -1,4 +1,10 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, Logger, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  Logger,
+  Inject,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as mqtt from 'mqtt';
 import Redis from 'ioredis';
@@ -12,9 +18,12 @@ function isFiniteNumber(v: unknown): v is number {
 
 function validatePosition(pos: GpsPosition): string | null {
   if (!pos.imei || typeof pos.imei !== 'string') return 'missing imei';
-  if (!isFiniteNumber(pos.lat) || pos.lat < -90 || pos.lat > 90) return `invalid lat: ${pos.lat}`;
-  if (!isFiniteNumber(pos.lng) || pos.lng < -180 || pos.lng > 180) return `invalid lng: ${pos.lng}`;
-  if (!isFiniteNumber(pos.speed) || pos.speed < 0) return `invalid speed: ${pos.speed}`;
+  if (!isFiniteNumber(pos.lat) || pos.lat < -90 || pos.lat > 90)
+    return `invalid lat: ${pos.lat}`;
+  if (!isFiniteNumber(pos.lng) || pos.lng < -180 || pos.lng > 180)
+    return `invalid lng: ${pos.lng}`;
+  if (!isFiniteNumber(pos.speed) || pos.speed < 0)
+    return `invalid speed: ${pos.speed}`;
   return null;
 }
 
@@ -29,7 +38,10 @@ export class MqttIngestionService implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   onModuleInit() {
-    const brokerUrl = this.config.get<string>('MQTT_BROKER_URL', 'mqtt://localhost:1883');
+    const brokerUrl = this.config.get<string>(
+      'MQTT_BROKER_URL',
+      'mqtt://localhost:1883',
+    );
     this.client = mqtt.connect(brokerUrl);
 
     this.client.on('connect', () => {
@@ -81,7 +93,9 @@ export class MqttIngestionService implements OnModuleInit, OnModuleDestroy {
 
       const err = validatePosition(pos);
       if (err) {
-        this.logger.warn(`Invalid position from IMEI ${imei}: ${err} — dropping`);
+        this.logger.warn(
+          `Invalid position from IMEI ${imei}: ${err} — dropping`,
+        );
         return;
       }
 
@@ -91,12 +105,17 @@ export class MqttIngestionService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private async parseTeltonikaRecord(imei: string, payload: Buffer): Promise<void> {
+  private async parseTeltonikaRecord(
+    imei: string,
+    payload: Buffer,
+  ): Promise<void> {
     let record: Record<string, unknown>;
     try {
       record = JSON.parse(payload.toString());
     } catch (err) {
-      this.logger.warn(`Malformed Teltonika JSON for IMEI ${imei}: ${err} — dropping`);
+      this.logger.warn(
+        `Malformed Teltonika JSON for IMEI ${imei}: ${err} — dropping`,
+      );
       return;
     }
 
@@ -118,7 +137,9 @@ export class MqttIngestionService implements OnModuleInit, OnModuleDestroy {
 
     const err = validatePosition(pos);
     if (err) {
-      this.logger.warn(`Invalid Teltonika position from IMEI ${imei}: ${err} — dropping`);
+      this.logger.warn(
+        `Invalid Teltonika position from IMEI ${imei}: ${err} — dropping`,
+      );
       return;
     }
 
@@ -129,7 +150,9 @@ export class MqttIngestionService implements OnModuleInit, OnModuleDestroy {
     const dedupKey = `dedup:pos:${pos.imei}`;
     const acquired = await this.redis.set(dedupKey, '1', 'EX', 1, 'NX');
     if (!acquired) {
-      this.logger.debug(`Rate-limited duplicate from IMEI ${pos.imei} — dropping`);
+      this.logger.debug(
+        `Rate-limited duplicate from IMEI ${pos.imei} — dropping`,
+      );
       return;
     }
 

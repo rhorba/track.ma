@@ -1,6 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { VehiclesService } from './vehicles.service';
 import { Vehicle } from '../../entities/vehicle.entity';
 import { Organization } from '../../entities/organization.entity';
@@ -20,8 +24,17 @@ const mockOrgsRepo = {
 };
 
 const ORG_ID = 'org-1';
-const VEHICLE: Partial<Vehicle> = { id: 'v-1', organizationId: ORG_ID, isActive: true, name: 'Truck 1' };
-const ORG: Partial<Organization> = { id: ORG_ID, vehicleLimit: 5, tier: 'starter' } as any;
+const VEHICLE: Partial<Vehicle> = {
+  id: 'v-1',
+  organizationId: ORG_ID,
+  isActive: true,
+  name: 'Truck 1',
+};
+const ORG: Partial<Organization> = {
+  id: ORG_ID,
+  vehicleLimit: 5,
+  tier: 'starter',
+} as any;
 
 describe('VehiclesService', () => {
   let service: VehiclesService;
@@ -42,7 +55,9 @@ describe('VehiclesService', () => {
     it('returns active vehicles for org', async () => {
       mockVehicleRepo.find.mockResolvedValue([VEHICLE]);
       const result = await service.findByOrg(ORG_ID);
-      expect(mockVehicleRepo.find).toHaveBeenCalledWith({ where: { organizationId: ORG_ID, isActive: true } });
+      expect(mockVehicleRepo.find).toHaveBeenCalledWith({
+        where: { organizationId: ORG_ID, isActive: true },
+      });
       expect(result).toEqual([VEHICLE]);
     });
   });
@@ -56,12 +71,19 @@ describe('VehiclesService', () => {
 
     it('throws NotFoundException when vehicle not found', async () => {
       mockVehicleRepo.findOne.mockResolvedValue(null);
-      await expect(service.findOne('v-x', ORG_ID)).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('v-x', ORG_ID)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('throws ForbiddenException when org does not match', async () => {
-      mockVehicleRepo.findOne.mockResolvedValue({ ...VEHICLE, organizationId: 'other-org' });
-      await expect(service.findOne('v-1', ORG_ID)).rejects.toThrow(ForbiddenException);
+      mockVehicleRepo.findOne.mockResolvedValue({
+        ...VEHICLE,
+        organizationId: 'other-org',
+      });
+      await expect(service.findOne('v-1', ORG_ID)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 
@@ -81,7 +103,9 @@ describe('VehiclesService', () => {
       mockOrgsRepo.findOneOrFail.mockResolvedValue(ORG);
       mockVehicleRepo.count.mockResolvedValue(5); // at limit
       const dto = { name: 'New Truck' } as any;
-      await expect(service.create(dto, ORG_ID)).rejects.toThrow(BadRequestException);
+      await expect(service.create(dto, ORG_ID)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -90,10 +114,14 @@ describe('VehiclesService', () => {
       mockVehicleRepo.findOne.mockResolvedValue(VEHICLE);
       mockVehicleRepo.update.mockResolvedValue(undefined);
       const updated = { ...VEHICLE, name: 'Updated' };
-      mockVehicleRepo.findOne.mockResolvedValueOnce(VEHICLE).mockResolvedValueOnce(updated);
+      mockVehicleRepo.findOne
+        .mockResolvedValueOnce(VEHICLE)
+        .mockResolvedValueOnce(updated);
 
-      const result = await service.update('v-1', { name: 'Updated' } as any, ORG_ID);
-      expect(mockVehicleRepo.update).toHaveBeenCalledWith('v-1', { name: 'Updated' });
+      const result = await service.update('v-1', { name: 'Updated' }, ORG_ID);
+      expect(mockVehicleRepo.update).toHaveBeenCalledWith('v-1', {
+        name: 'Updated',
+      });
       expect(result).toEqual(updated);
     });
   });
@@ -103,7 +131,9 @@ describe('VehiclesService', () => {
       mockVehicleRepo.findOne.mockResolvedValue(VEHICLE);
       mockVehicleRepo.update.mockResolvedValue(undefined);
       await service.remove('v-1', ORG_ID);
-      expect(mockVehicleRepo.update).toHaveBeenCalledWith('v-1', { isActive: false });
+      expect(mockVehicleRepo.update).toHaveBeenCalledWith('v-1', {
+        isActive: false,
+      });
     });
   });
 });

@@ -93,11 +93,17 @@ describe('OrganizationsService.getUsage', () => {
 
     const result = await service.getUsage('org-1');
     expect(result.userCount).toBe(7);
-    expect(userRepo.count).toHaveBeenCalledWith({ where: { organizationId: 'org-1', isActive: true } });
+    expect(userRepo.count).toHaveBeenCalledWith({
+      where: { organizationId: 'org-1', isActive: true },
+    });
   });
 
   it('returns 0 counts when org has no vehicles or users', async () => {
-    orgRepo.findOneOrFail.mockResolvedValue({ ...sampleOrg, tier: 'trial', vehicleLimit: 2 });
+    orgRepo.findOneOrFail.mockResolvedValue({
+      ...sampleOrg,
+      tier: 'trial',
+      vehicleLimit: 2,
+    });
     const qb = {
       innerJoin: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),

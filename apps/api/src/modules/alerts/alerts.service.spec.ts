@@ -61,7 +61,9 @@ describe('AlertsService', () => {
     const rules = [{ id: 'r-1', type: 'speeding' }];
     mockRulesRepo.find.mockResolvedValue(rules);
     const result = await service.getRules(ORG_ID);
-    expect(mockRulesRepo.find).toHaveBeenCalledWith({ where: { organizationId: ORG_ID } });
+    expect(mockRulesRepo.find).toHaveBeenCalledWith({
+      where: { organizationId: ORG_ID },
+    });
     expect(result).toEqual(rules);
   });
 
@@ -79,7 +81,10 @@ describe('AlertsService', () => {
     await service.acknowledge('a-1');
     expect(mockAlertsRepo.update).toHaveBeenCalledWith(
       'a-1',
-      expect.objectContaining({ acknowledged: true, acknowledgedAt: expect.any(Date) }),
+      expect.objectContaining({
+        acknowledged: true,
+        acknowledgedAt: expect.any(Date),
+      }),
     );
   });
 
@@ -87,7 +92,9 @@ describe('AlertsService', () => {
     const geofences = [{ id: 'g-1', name: 'Zone A' }];
     mockGeofencesRepo.find.mockResolvedValue(geofences);
     const result = await service.getGeofences(ORG_ID);
-    expect(mockGeofencesRepo.find).toHaveBeenCalledWith({ where: { organizationId: ORG_ID, isActive: true } });
+    expect(mockGeofencesRepo.find).toHaveBeenCalledWith({
+      where: { organizationId: ORG_ID, isActive: true },
+    });
     expect(result).toEqual(geofences);
   });
 
@@ -95,7 +102,7 @@ describe('AlertsService', () => {
     const data = { name: 'Port Zone', polygon: [], organizationId: ORG_ID };
     mockGeofencesRepo.create.mockReturnValue(data);
     mockGeofencesRepo.save.mockResolvedValue({ id: 'g-1', ...data });
-    const result = await service.createGeofence(data as any);
+    const result = await service.createGeofence(data);
     expect(result.id).toBe('g-1');
   });
 

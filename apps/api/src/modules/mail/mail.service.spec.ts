@@ -36,7 +36,11 @@ describe('MailService', () => {
 
   describe('sendAlert', () => {
     it('sends email via transporter', async () => {
-      await service.sendAlert('user@test.ma', 'Alert!', '<p>Speed exceeded</p>');
+      await service.sendAlert(
+        'user@test.ma',
+        'Alert!',
+        '<p>Speed exceeded</p>',
+      );
       expect(mockSendMail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'user@test.ma',
@@ -56,7 +60,11 @@ describe('MailService', () => {
 
   describe('sendInvite', () => {
     it('sends invite email with org name and link', async () => {
-      await service.sendInvite('newuser@test.ma', 'Transport Co', 'https://track.ma/accept?token=abc');
+      await service.sendInvite(
+        'newuser@test.ma',
+        'Transport Co',
+        'https://track.ma/accept?token=abc',
+      );
       expect(mockSendMail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'newuser@test.ma',

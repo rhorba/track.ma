@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export interface AuthUser {
   id: string;
@@ -40,11 +40,7 @@ export function clearToken() {
 }
 
 export function useAuth() {
-  const [user, setUser] = useState<AuthUser | null>(null);
-
-  useEffect(() => {
-    setUser(getStoredUser());
-  }, []);
+  const [user, setUser] = useState<AuthUser | null>(() => getStoredUser());
 
   const logout = () => {
     clearToken();

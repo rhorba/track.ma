@@ -1,7 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Organization } from './organization.entity';
 
-export type VehicleType = 'car' | 'truck' | 'van' | 'motorcycle' | 'boat' | 'scooter';
+export type VehicleType =
+  | 'car'
+  | 'truck'
+  | 'van'
+  | 'motorcycle'
+  | 'boat'
+  | 'scooter';
 export type VehicleStatus = 'active' | 'idle' | 'offline' | 'maintenance';
 
 @Entity('vehicles')
@@ -16,10 +31,18 @@ export class Vehicle {
   @Column({ nullable: true })
   plate: string;
 
-  @Column({ type: 'enum', enum: ['car', 'truck', 'van', 'motorcycle', 'boat', 'scooter'], default: 'car' })
+  @Column({
+    type: 'enum',
+    enum: ['car', 'truck', 'van', 'motorcycle', 'boat', 'scooter'],
+    default: 'car',
+  })
   type: VehicleType;
 
-  @Column({ type: 'enum', enum: ['active', 'idle', 'offline', 'maintenance'], default: 'offline' })
+  @Column({
+    type: 'enum',
+    enum: ['active', 'idle', 'offline', 'maintenance'],
+    default: 'offline',
+  })
   status: VehicleStatus;
 
   @Column({ unique: true, nullable: true })

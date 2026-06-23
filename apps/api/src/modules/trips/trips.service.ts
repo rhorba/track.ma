@@ -12,13 +12,22 @@ export class TripsService {
   ) {}
 
   getTrips(vehicleId: string) {
-    return this.tripsRepo.find({ where: { vehicleId, isComplete: true }, order: { startedAt: 'DESC' }, take: 50 });
+    return this.tripsRepo.find({
+      where: { vehicleId, isComplete: true },
+      order: { startedAt: 'DESC' },
+      take: 50,
+    });
   }
 
   getTripPositions(tripId: string) {
     return this.positionsRepo
       .createQueryBuilder('p')
-      .innerJoin(Trip, 't', 't.id = :tripId AND p.vehicleId = t.vehicleId AND p.timestamp BETWEEN t.startedAt AND t.endedAt', { tripId })
+      .innerJoin(
+        Trip,
+        't',
+        't.id = :tripId AND p.vehicleId = t.vehicleId AND p.timestamp BETWEEN t.startedAt AND t.endedAt',
+        { tripId },
+      )
       .orderBy('p.timestamp', 'ASC')
       .getMany();
   }

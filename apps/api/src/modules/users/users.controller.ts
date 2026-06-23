@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Patch, Body, Param, UseGuards, Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  Param,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { IsEmail, IsEnum, IsOptional } from 'class-validator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -46,13 +55,28 @@ export class UsersController {
   @Roles('org_admin')
   async invite(@Body() body: InviteDto, @Request() req: any) {
     const org = await this.orgsService.findById(req.user.organizationId);
-    return this.inviteService.send(body.email, body.role ?? 'viewer', req.user.organizationId, req.user.id, org.name);
+    return this.inviteService.send(
+      body.email,
+      body.role ?? 'viewer',
+      req.user.organizationId,
+      req.user.id,
+      org.name,
+    );
   }
 
   @Patch(':id/role')
   @UseGuards(RolesGuard)
   @Roles('org_admin')
-  updateRole(@Param('id') id: string, @Body() body: UpdateRoleDto, @Request() req: any) {
-    return this.usersService.updateRole(id, body.role as UserRole, req.user.id, req.user.organizationId);
+  updateRole(
+    @Param('id') id: string,
+    @Body() body: UpdateRoleDto,
+    @Request() req: any,
+  ) {
+    return this.usersService.updateRole(
+      id,
+      body.role as UserRole,
+      req.user.id,
+      req.user.organizationId,
+    );
   }
 }

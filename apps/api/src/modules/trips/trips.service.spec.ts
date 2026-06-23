@@ -14,7 +14,12 @@ const mockPositionsRepo = {
 };
 
 const VEHICLE_ID = 'v-1';
-const TRIP: Partial<Trip> = { id: 't-1', vehicleId: VEHICLE_ID, isComplete: true, distanceKm: 12.5 };
+const TRIP: Partial<Trip> = {
+  id: 't-1',
+  vehicleId: VEHICLE_ID,
+  isComplete: true,
+  distanceKm: 12.5,
+};
 
 describe('TripsService', () => {
   let service: TripsService;

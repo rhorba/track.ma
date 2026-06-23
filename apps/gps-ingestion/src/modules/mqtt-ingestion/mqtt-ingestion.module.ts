@@ -7,7 +7,8 @@ import { MqttIngestionService } from './mqtt-ingestion.service';
   providers: [
     {
       provide: 'REDIS_PUBLISHER',
-      useFactory: (config: ConfigService) => new Redis(config.get<string>('REDIS_URL')!),
+      useFactory: (config: ConfigService) =>
+        new Redis(config.get<string>('REDIS_URL')!),
       inject: [ConfigService],
     },
     MqttIngestionService,

@@ -16,7 +16,9 @@ export class FleetService {
   ) {}
 
   async storePosition(pos: GpsPosition): Promise<Vehicle | null> {
-    const vehicle = await this.vehiclesRepo.findOne({ where: { imei: pos.imei } });
+    const vehicle = await this.vehiclesRepo.findOne({
+      where: { imei: pos.imei },
+    });
     if (!vehicle) return null;
 
     const position = this.positionsRepo.create({
@@ -43,13 +45,19 @@ export class FleetService {
     );
 
     // Update vehicle status
-    const status = pos.ignition ? (pos.speed > 0 ? 'active' : 'idle') : 'offline';
+    const status = pos.ignition
+      ? pos.speed > 0
+        ? 'active'
+        : 'idle'
+      : 'offline';
     await this.vehiclesRepo.update(vehicle.id, { status });
     return vehicle;
   }
 
   async getLatestPositions(organizationId: string) {
-    const vehicles = await this.vehiclesRepo.find({ where: { organizationId, isActive: true } });
+    const vehicles = await this.vehiclesRepo.find({
+      where: { organizationId, isActive: true },
+    });
     const positions = await Promise.all(
       vehicles.map(async (v) => {
         const cached = await this.redis.get(`vehicle:${v.id}:latest`);

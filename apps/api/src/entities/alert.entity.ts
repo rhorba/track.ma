@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  Index,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Vehicle } from './vehicle.entity';
 import { AlertRule } from './alert-rule.entity';
 
@@ -26,7 +34,11 @@ export class Alert {
   @Column()
   type: string;
 
-  @Column({ type: 'enum', enum: ['info', 'warning', 'critical'], default: 'warning' })
+  @Column({
+    type: 'enum',
+    enum: ['info', 'warning', 'critical'],
+    default: 'warning',
+  })
   severity: string;
 
   @Column()

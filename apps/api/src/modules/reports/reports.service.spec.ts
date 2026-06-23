@@ -40,7 +40,12 @@ describe('ReportsService', () => {
 
   describe('getFleetSummary', () => {
     it('returns fleet summary from query builder', async () => {
-      const summary = { totalKm: '1234.5', totalFuel: '100', totalTrips: '10', avgSpeed: '80' };
+      const summary = {
+        totalKm: '1234.5',
+        totalFuel: '100',
+        totalTrips: '10',
+        avgSpeed: '80',
+      };
       mockTripsRepo.createQueryBuilder.mockReturnValue(makeQb(summary));
 
       const result = await service.getFleetSummary(ORG_ID, FROM, TO);
@@ -49,7 +54,12 @@ describe('ReportsService', () => {
     });
 
     it('returns zeros when no trips in range', async () => {
-      const empty = { totalKm: '0', totalFuel: '0', totalTrips: '0', avgSpeed: '0' };
+      const empty = {
+        totalKm: '0',
+        totalFuel: '0',
+        totalTrips: '0',
+        avgSpeed: '0',
+      };
       mockTripsRepo.createQueryBuilder.mockReturnValue(makeQb(empty));
       const result = await service.getFleetSummary(ORG_ID, FROM, TO);
       expect(result.totalTrips).toBe('0');
@@ -69,7 +79,9 @@ describe('ReportsService', () => {
       const qb = makeQb(null, TRIPS);
       mockTripsRepo.createQueryBuilder.mockReturnValue(qb);
       await service.getTrips(ORG_ID, 'v-1', FROM, TO);
-      expect(qb.andWhere).toHaveBeenCalledWith('t.vehicleId = :vehicleId', { vehicleId: 'v-1' });
+      expect(qb.andWhere).toHaveBeenCalledWith('t.vehicleId = :vehicleId', {
+        vehicleId: 'v-1',
+      });
     });
 
     it('does not add vehicleId filter when undefined', async () => {

@@ -61,7 +61,13 @@ describe('AlertEngineService', () => {
 
   it('fires speeding alert when speed exceeds limit', async () => {
     rulesRepo.find.mockResolvedValue([
-      { id: 'r-1', type: 'speeding', config: { speedLimit: 100 }, organizationId: 'org-1', isActive: true },
+      {
+        id: 'r-1',
+        type: 'speeding',
+        config: { speedLimit: 100 },
+        organizationId: 'org-1',
+        isActive: true,
+      },
     ]);
     const pos = { ...basePos, speed: 130 };
     const alert = await service.evaluate(pos, 'v-1', 'org-1');
@@ -72,7 +78,13 @@ describe('AlertEngineService', () => {
 
   it('does not fire speeding alert when speed is under limit', async () => {
     rulesRepo.find.mockResolvedValue([
-      { id: 'r-1', type: 'speeding', config: { speedLimit: 100 }, organizationId: 'org-1', isActive: true },
+      {
+        id: 'r-1',
+        type: 'speeding',
+        config: { speedLimit: 100 },
+        organizationId: 'org-1',
+        isActive: true,
+      },
     ]);
     const pos = { ...basePos, speed: 80 };
     const result = await service.evaluate(pos, 'v-1', 'org-1');
@@ -81,7 +93,13 @@ describe('AlertEngineService', () => {
 
   it('fires ignition_on alert when ignition is true', async () => {
     rulesRepo.find.mockResolvedValue([
-      { id: 'r-2', type: 'ignition_on', config: {}, organizationId: 'org-1', isActive: true },
+      {
+        id: 'r-2',
+        type: 'ignition_on',
+        config: {},
+        organizationId: 'org-1',
+        isActive: true,
+      },
     ]);
     const pos = { ...basePos, ignition: true };
     const alert = await service.evaluate(pos, 'v-1', 'org-1');
@@ -90,7 +108,13 @@ describe('AlertEngineService', () => {
 
   it('fires low_fuel alert when fuel below threshold', async () => {
     rulesRepo.find.mockResolvedValue([
-      { id: 'r-3', type: 'low_fuel', config: { fuelThreshold: 15 }, organizationId: 'org-1', isActive: true },
+      {
+        id: 'r-3',
+        type: 'low_fuel',
+        config: { fuelThreshold: 15 },
+        organizationId: 'org-1',
+        isActive: true,
+      },
     ]);
     const pos = { ...basePos, fuelLevel: 8 };
     const alert = await service.evaluate(pos, 'v-1', 'org-1');
@@ -100,7 +124,13 @@ describe('AlertEngineService', () => {
 
   it('deduplicates alerts within 5 minutes', async () => {
     rulesRepo.find.mockResolvedValue([
-      { id: 'r-1', type: 'speeding', config: { speedLimit: 100 }, organizationId: 'org-1', isActive: true },
+      {
+        id: 'r-1',
+        type: 'speeding',
+        config: { speedLimit: 100 },
+        organizationId: 'org-1',
+        isActive: true,
+      },
     ]);
     alertsRepo.count.mockResolvedValue(1); // already exists
     const pos = { ...basePos, speed: 130 };
@@ -122,7 +152,13 @@ describe('AlertEngineService', () => {
       ],
     };
     rulesRepo.find.mockResolvedValue([
-      { id: 'r-4', type: 'geofence_enter', config: { geofenceId: 'gf-1' }, organizationId: 'org-1', isActive: true },
+      {
+        id: 'r-4',
+        type: 'geofence_enter',
+        config: { geofenceId: 'gf-1' },
+        organizationId: 'org-1',
+        isActive: true,
+      },
     ]);
     geofencesRepo.findOne.mockResolvedValue(geofence);
     // Point inside the geofence square
@@ -145,7 +181,13 @@ describe('AlertEngineService', () => {
       ],
     };
     rulesRepo.find.mockResolvedValue([
-      { id: 'r-4', type: 'geofence_enter', config: { geofenceId: 'gf-1' }, organizationId: 'org-1', isActive: true },
+      {
+        id: 'r-4',
+        type: 'geofence_enter',
+        config: { geofenceId: 'gf-1' },
+        organizationId: 'org-1',
+        isActive: true,
+      },
     ]);
     geofencesRepo.findOne.mockResolvedValue(geofence);
     const pos = { ...basePos, lat: 5, lng: 5 };
@@ -166,7 +208,13 @@ describe('AlertEngineService', () => {
       ],
     };
     rulesRepo.find.mockResolvedValue([
-      { id: 'r-5', type: 'geofence_exit', config: { geofenceId: 'gf-2' }, organizationId: 'org-1', isActive: true },
+      {
+        id: 'r-5',
+        type: 'geofence_exit',
+        config: { geofenceId: 'gf-2' },
+        organizationId: 'org-1',
+        isActive: true,
+      },
     ]);
     geofencesRepo.findOne.mockResolvedValue(geofence);
 
@@ -175,7 +223,11 @@ describe('AlertEngineService', () => {
     alertsRepo.save.mockClear();
 
     // Second call: outside — should fire exit
-    const alert = await service.evaluate({ ...basePos, lat: 5, lng: 5 }, 'v-exit', 'org-1');
+    const alert = await service.evaluate(
+      { ...basePos, lat: 5, lng: 5 },
+      'v-exit',
+      'org-1',
+    );
     expect(alert?.type).toBe('geofence_exit');
   });
 });

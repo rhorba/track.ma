@@ -16,7 +16,9 @@ export class AlertsService {
   getAlerts(organizationId: string) {
     return this.alertsRepo
       .createQueryBuilder('a')
-      .innerJoin('a.rule', 'r', 'r.organizationId = :organizationId', { organizationId })
+      .innerJoin('a.rule', 'r', 'r.organizationId = :organizationId', {
+        organizationId,
+      })
       .leftJoinAndSelect('a.vehicle', 'v')
       .orderBy('a.triggeredAt', 'DESC')
       .take(100)
@@ -32,11 +34,16 @@ export class AlertsService {
   }
 
   acknowledge(id: string) {
-    return this.alertsRepo.update(id, { acknowledged: true, acknowledgedAt: new Date() });
+    return this.alertsRepo.update(id, {
+      acknowledged: true,
+      acknowledgedAt: new Date(),
+    });
   }
 
   getGeofences(organizationId: string) {
-    return this.geofencesRepo.find({ where: { organizationId, isActive: true } });
+    return this.geofencesRepo.find({
+      where: { organizationId, isActive: true },
+    });
   }
 
   createGeofence(data: Partial<Geofence>) {
@@ -44,6 +51,9 @@ export class AlertsService {
   }
 
   async deleteGeofence(id: string, organizationId: string) {
-    await this.geofencesRepo.update({ id, organizationId }, { isActive: false });
+    await this.geofencesRepo.update(
+      { id, organizationId },
+      { isActive: false },
+    );
   }
 }
