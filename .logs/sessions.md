@@ -252,3 +252,45 @@
 
 **Resumed from**: Sprint 7 stories 7.1–7.4 complete (commit 10b288c)
 **Pending**: 7.5 Load testing (k6) + 7.6 SEO + CDN (sitemap, og:image, edge headers)
+
+---
+
+## SESSION_END — 2026-06-23 (Sprint 7: Stories 7.5 Load Testing + 7.6 SEO/CDN)
+
+**Commit**: `dff16f2` pushed to `origin/main`
+
+**Stories delivered**:
+- **7.5 Load Testing**: k6 smoke/load/soak scripts with per-endpoint latency Trends; p95 thresholds; docs/load-testing.md (bottleneck analysis, DB pool recs, CI integration)
+- **7.6 SEO + CDN**: Full OG/Twitter card metadata, sitemap.xml, robots.txt, edge OG image (ImageResponse), next.config.ts Cache-Control headers (immutable static, s-maxage public pages, no-store auth, security headers)
+
+**VERIFY gate**: 145 tests, 29 suites — all green (unchanged from Story 7.4)
+
+**SPRINT 7 COMPLETE** — all 6 stories done (7.1–7.6), 39 pts total
+
+**Next**: Sprint 8 planning — candidates: v1.0 tag + Vercel/VPS deploy, Playwright video recording, mobile app (React Native), or product analytics (PostHog/Plausible)
+
+---
+
+## SESSION_START — 2026-06-23 (Playwright E2E video recording — full browser test suite + merged final video)
+
+**Resumed from**: Sprint 7 complete (commit dff16f2)
+**Goal**: Write comprehensive E2E Playwright tests with video recording for all critical user flows, then merge recordings into a single final video
+
+---
+
+## SESSION_END — 2026-06-23 (Playwright E2E video recording suite)
+
+**Commit**: `0a66184` pushed to `origin/main`
+
+**What was built**:
+- `apps/web/playwright.video.config.ts` — video:on, slowMo:350, workers:1 (serial), outputDir→.recordings/raw
+- `apps/web/e2e/video/helpers.ts` — shared FAKE_TOKEN, injectAuth, mountAuthApi (Casa Logistique org, 4 vehicles, 5 alerts, 3 trips, 3 team members)
+- 11 ordered spec files (00–10): landing, auth, register, dashboard, vehicles, alerts, reports, billing, admin, branding, demo+offline
+- `scripts/merge-recordings.mjs` — ffmpeg concat (VP9 encode + stream-copy fallback) → .recordings/final/v1.0-DATE.webm
+
+**To produce the final video**:
+  1. Start dev server: `pnpm dev`
+  2. In a second terminal: `pnpm record`
+  OR step-by-step:
+     `pnpm test:video`              → records all flows into .recordings/raw/
+     `node scripts/merge-recordings.mjs`  → merges into .recordings/final/v1.0-DATE.webm

@@ -48,3 +48,45 @@
 - Reports: title, stat cards, table headers, empty states → FR
 - Login: title, labels, error message, button → FR
 - Tests: 48/48 passing, 0 TS errors
+
+## 2026-06-23 — Sprint 7 Story 7.4: Multi-tenant Branding ✅
+
+- `organization.entity.ts`: added `logoUrl` (nullable) + `primaryColor` (nullable, default '#2563eb')
+- `migrations/1719100000000-AddOrgBranding.ts`: adds logo_url + primary_color columns (IF NOT EXISTS)
+- `organizations/dto/update-branding.dto.ts`: UpdateBrandingDto (IsUrl logoUrl, Matches hex primaryColor)
+- `organizations.service.ts`: updateBranding() + findBySlugPublic() methods
+- `organizations.controller.ts`: PATCH /me/branding (auth), GET /public?slug (public, SkipThrottle)
+- `apps/web/src/lib/branding.tsx`: BrandingContext — fetches org, injects --color-primary CSS var
+- `apps/web/src/components/Providers.tsx`: BrandingProvider wraps ThemeProvider children
+- `apps/web/src/components/Sidebar.tsx`: org logo + brand color on active nav link
+- `apps/web/src/lib/i18n.tsx`: branding translation keys (fr + ar)
+- `apps/web/src/app/settings/branding/page.tsx`: logo URL input + color picker + preview + save
+- `apps/web/src/middleware.ts`: subdomain slug → x-org-slug header
+- `apps/web/src/lib/api.ts`: getMyOrg(), updateBranding(), getPublicBranding() calls
+- Tests: 145 passed, 29 suites | Coverage: Stmt 90.46% | Branch 75.82% | Fn 86.66% | Lines 90.47%
+- Commit: 10b288c pushed to origin/main
+
+## 2026-06-23 — Sprint 7 Stories 7.5 + 7.6: Load Testing + SEO/CDN ✅
+
+### Story 7.5 — Load Testing (k6)
+- `k6/smoke.js`: 1 VU, 30s — auth → positions → vehicles → alerts → reports/summary; thresholds p95<500ms
+- `k6/load.js`: 0→50 VUs ramp (6 min); custom Trends for position/vehicle/alert latency; p95<300/400/400ms
+- `k6/soak.js`: 20 VUs sustained 10 min; drift detection via p1_position_latency Trend
+- `docs/load-testing.md`: bottleneck analysis (Redis, TypeORM pool, GROUP BY queries), DB pool reco (max:25), CI integration steps
+
+### Story 7.6 — SEO + CDN
+- `apps/web/src/app/layout.tsx`: metadataBase, full OG/Twitter cards, hreflang alternates, keywords, robots directive
+- `apps/web/src/app/page.tsx`: page-level SEO metadata + canonical URL
+- `apps/web/src/app/demo/page.tsx`: OG + Twitter card metadata
+- `apps/web/src/app/sitemap.ts`: MetadataRoute.Sitemap — /, /register, /demo, /login
+- `apps/web/src/app/robots.ts`: MetadataRoute.Robots — allow public pages, disallow dashboard/api
+- `apps/web/src/app/opengraph-image.tsx`: Edge runtime OG image 1200×630 (ImageResponse)
+- `apps/web/next.config.ts`: Cache-Control headers (immutable static, s-maxage=3600 public, no-store auth, security headers)
+- `.env.example`: NEXT_PUBLIC_SITE_URL added
+
+- Tests: 145 passed, 29 suites — all green | Coverage unchanged ≥ thresholds
+- Commit: dff16f2 pushed to origin/main
+
+## SPRINT_SNAPSHOT — Sprint 7 COMPLETE ✅
+Stories: 7.1 Arabic RTL | 7.2 PWA | 7.3 Analytics | 7.4 Multi-tenant Branding | 7.5 Load Testing | 7.6 SEO+CDN
+Total: 39 pts | API tests: 145 passing | Coverage: Stmt 90.46% / Branch 75.82% / Fn 86.66% / Lines 90.47%
