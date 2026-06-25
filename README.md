@@ -9,9 +9,15 @@ TrackMa is a self-serve, real-time GPS fleet management SaaS built for the Moroc
 - **Smart Alerts** — Speeding, geofence breach, ignition events, low fuel — with email notifications
 - **Fuel Monitoring** — Device-reported or distance-calculated fuel consumption
 - **Multi-user Organizations** — Roles: Admin, Fleet Manager, Viewer, Driver
-- **Self-serve Billing** — Stripe-powered subscription tiers (Starter / Pro / Business)
+- **Self-serve Billing** — Stripe-powered subscription tiers (Starter / Pro / Business / Flotte+)
 - **GPS Device Support** — Teltonika AVL protocol + generic MQTT JSON
-- **Bilingual UI** — French and Arabic (next-intl)
+- **Bilingual UI** — French and Arabic with RTL support (next-intl)
+- **Multi-tenant Branding** — Per-organisation slug routing and brand colour customisation
+- **Analytics Dashboard** — SVG charts for fleet KPIs and usage metrics
+- **PWA** — Progressive Web App with offline support
+- **Demo Mode** — Public sandbox with pre-seeded data, no sign-up required
+- **SEO & CDN Optimisation** — SSG landing pages, edge caching, structured data
+- **Load Tested** — k6 scripts validate performance under production-scale traffic
 
 ## Architecture
 
@@ -111,14 +117,17 @@ pnpm build        # Build all packages
 
 ## Sprint Roadmap
 
-| Sprint | Weeks | Goal |
+> **Project status: COMPLETE** — all 7 sprints shipped, CI green, 34/34 E2E tests passing.
+
+| Sprint | Goal | Status |
 |---|---|---|
-| ✅ Sprint 1 | 1–2 | Foundation & Scaffold |
-| Sprint 2 | 3–4 | GPS Pipeline & Live Map |
-| Sprint 3 | 5–6 | Alerts & Trip History |
-| Sprint 4 | 7–8 | Fuel, Roles & Reports |
-| Sprint 5 | 9–10 | Billing & Public Site |
-| Sprint 6 | 11–12 | Security, Polish & Launch |
+| Sprint 1 | Foundation & Scaffold — monorepo, Docker, CI skeleton | ✅ Done |
+| Sprint 2 | GPS Pipeline & Live Map — MQTT ingestion, WebSocket, OpenStreetMap | ✅ Done |
+| Sprint 3 | Alerts & Trip History — geofence, speeding, email notifications, replay | ✅ Done |
+| Sprint 4 | Billing, Roles & Admin — Stripe, invite flow, onboarding, admin panel | ✅ Done |
+| Sprint 5 | GPS Hardening & CI — production Dockerfiles, quality gates, Playwright E2E smoke tests | ✅ Done |
+| Sprint 6 | Security, Landing & French UI — hardening, demo mode, DB indexes, 134 tests | ✅ Done |
+| Sprint 7 | Scale & Polish — k6 load tests, SEO/CDN, multi-tenant branding, Arabic RTL, PWA, analytics | ✅ Done |
 
 ## License
 
